@@ -1,0 +1,279 @@
+CREATE TABLE member(
+                       memberNum NUMBER(6),
+                       memberId VARCHAR2(50),
+                       memberPw VARCHAR2(200) NOT NULL,
+                       memberName VARCHAR2(20),
+                       memberBday DATE not null,
+                       memberAddress VARCHAR2(300),
+                       memberTel VARCHAR2(20),
+                       memberPhone VARCHAR2(20) NOT NULL,
+                       memberEmail VARCHAR2(200),
+                       memberEmailYn NUMBER(1),
+                       memberMileage NUMBER(6) DEFAULT 0,
+                       CONSTRAINT memberNum_pk primary key (memberNum),
+                       CONSTRAINT memberId_uq UNIQUE(memberId),
+                       CONSTRAINT memberEmail_uq UNIQUE(memberEmail));
+
+insert into member values (member_seq.nextval,'admin','koyunpark1234','관리자','2022/01/01','서울시 강남구 도곡동','02-123-456','010-1111-1111',
+                           'admin@koyunpark.com','1','10000','0');
+insert into member values (member_seq.nextval,'koyunpark','koyunpark1234','고윤박','2020/05/07','서울시 강남구 신사동','02-123-456','010-1111-1111',
+                           'koyunpark@gmail.com','1','10000','2');
+insert into member values (member_seq.nextval,'parkyunko','koyunpark1234','박윤고','2021/07/15','서울시 강남구 논현동','02-123-456','010-1111-1111',
+                           'parkyunko@naver.com','1','10000','1');
+insert into member values (member_seq.nextval,'yunparkko','koyunpark1234','윤박고','1990/10/03','서울시 강남구 청담동','02-123-456','010-1111-1111',
+                           'yunparkko@gmail.com','1','10000','1');
+
+ALTER TABLE MEMBER MODIFY MEMBERPW VARCHAR2(1000) NULL;
+
+
+CREATE TABLE member_info(
+                            memberNum NUMBER(6),
+                            memberType NUMBER(5) not null,
+                            CONSTRAINT memberInfo_pk FOREIGN KEY(memberNum)
+                                REFERENCES member(memberNum)
+                                on delete cascade);
+
+CREATE TABLE google(
+    name nvarchar2(30) not null,
+    email varchar2(200) primary key,
+    role nvarchar2(10),
+    picture nvarchar2(300),
+    CONSTRAINT google_pk FOREIGN KEY(email)
+    REFERENCES member(memberEmail)
+    on delete cascade);
+
+CREATE TABLE kakao(
+        name nvarchar2(30) not null,
+        email varchar2(200) primary key,
+        picture nvarchar2(300),
+        CONSTRAINT kakao_pk FOREIGN KEY(email)
+        REFERENCES member(memberEmail)
+        on delete cascade);
+
+CREATE TABLE cmt(cmtNum number(5) primary key not null,
+                 cmtContent varchar2(500),
+                 cmtDate date default sysdate,
+                 qnaBoardNum number(5),constraint const FOREIGN KEY (qnaBoardNum) references qna_board(qnaBoardNum) on delete cascade
+);
+
+insert into cmt values(comments_seq.nextval,'저희 고윤박커피는 최고급 커피원두의 품질을 유지하기위해 애쓰고 있습니다.',sysdate,2);
+insert into cmt values(comments_seq.nextval,'다음주쯤에 과테말라 원두가 들어올 예정입니다.',sysdate,3);
+insert into cmt values(comments_seq.nextval,'테스트입니다',sysdate,4);
+insert into cmt values(comments_seq.nextval,'테스트 댓글입니다',sysdate,1);
+
+CREATE  SEQUENCE members_seq START WITH 10008 nocache;
+CREATE  SEQUENCE boards_seq START WITH 113 nocache;
+
+create SEQUENCE qna_board_seq
+    nocache
+start with 1;
+
+insert into qna_board values (qna_board_seq.nextval,'10001','테스트 입니다1','감동이에요 여기 커피',sysdate);
+insert into qna_board values (qna_board_seq.nextval,'10002','테스트 입니다2','감동이에요 여기 커피',sysdate);
+insert into qna_board values (qna_board_seq.nextval,'10004','테스트 입니다3','감동이에요 여기 커피',sysdate);
+insert into qna_board values (qna_board_seq.nextval,'10005','테스트 입니다4','감동이에요 여기 커피',sysdate);
+
+CREATE SEQUENCE member_seq
+NOCACHE;
+
+CREATE TABLE member_info(
+    memberNum NUMBER(6),
+    memberType NUMBER(5) not null,
+    CONSTRAINT memberInfo_pk FOREIGN KEY(memberNum)
+    REFERENCES member(memberNum)
+    on delete cascade);
+
+insert into member_info values(10001,0);
+insert into member_info values(10002,1);
+insert into member_info values(10003,2);
+
+CREATE TABLE member_email(
+    memberEmail VARCHAR2(200),
+    memberEmailYn NUMBER(1),
+    CONSTRAINT member_email FOREIGN KEY(memberEmail)
+    REFERENCES member(memberEmail)
+    on delete cascade);
+
+insert into member_email values('admin@naver.com',0);
+insert into member_email values('park@naver.com',1);
+insert into member_email values('ko@naver.com',1);
+
+CREATE TABLE qna_board(
+    qnaBoardNum NUMBER(5) primary key,
+    memberNum NUMBER(5),
+    qnaBoardTitle NVARCHAR2(150),
+    qnaBoardContent NVARCHAR2(2000),
+    qnaBoardDate DATE,
+    CONSTRAINT qna_board_fk FOREIGN KEY(memberNum)
+    REFERENCES member(memberNum)
+    on delete cascade);
+
+CREATE SEQUENCE qna_board_seq
+NOCACHE;
+
+insert into qna_board values(qna_board_seq.nextval,10002,'안녕하세요','진짜 여기 커피 대박이네요',sysdate);
+insert into qna_board values(qna_board_seq.nextval,10003,'반가워요','커피 맛나요',sysdate);
+insert into qna_board values(qna_board_seq.nextval,10002,'두번째네요','감동이에요 여기 커피',sysdate);
+
+CREATE TABLE comments(
+    cmtNum NUMBER(5) primary key,
+    qnaBoardNum NUMBER(5),
+    cmtContent NVARCHAR2(500),
+    cmtDate DATE,
+    CONSTRAINT comments_fk FOREIGN KEY(qnaBoardNum)
+    REFERENCES qna_board(qnaBoardNum)
+    on delete cascade);
+
+CREATE SEQUENCE comments_seq
+NOCACHE;
+
+insert into comments values(comments_seq.nextval,4,'첫 게시글 당첨!!',sysdate);
+insert into comments values(comments_seq.nextval,5,'첫 방문 고마워요',sysdate);
+insert into comments values(comments_seq.nextval,6,'또 이용을 해주셔서 감사해요',sysdate);
+
+CREATE TABLE class(
+    classNum NUMBER(3) primary key,
+    classDate DATE);
+
+CREATE SEQUENCE class_seq
+NOCACHE;
+
+insert into class values(class_seq.nextval,'2022-02-26');
+insert into class values(class_seq.nextval,'2022-03-05');
+insert into class values(class_seq.nextval,'2022-03-12');
+
+
+
+------------원데이클래스 테이블 수정 전 ---------------------
+CREATE TABLE member_class(
+    classJoinNum NUMBER(5),
+    classNum NUMBER(3),
+    memberNum NUMBER(6),
+    classApplyStatus NUMBER(1) default 0,
+    CONSTRAINT classNum_fk FOREIGN KEY(classNum)
+    REFERENCES class(classNum)
+    on delete cascade,
+    CONSTRAINT memberNum_fk FOREIGN KEY(memberNum)
+    REFERENCES member(memberNum)
+    on delete cascade);
+
+CREATE SEQUENCE member_class_seq
+NOCACHE;
+
+insert into member_class values(member_class_seq.nextval,1,10002,1);
+insert into member_class values(member_class_seq.nextval,1,10003,1);
+insert into member_class values(member_class_seq.nextval,2,10002,1);
+insert into member_class values(member_class_seq.nextval,3,10003,1);
+-------------원데이클래스 테이블 수정 후
+CREATE TABLE oneday_class(
+                             classNum number(6) primary key,
+                             classDate Date not null,
+                             classCapacity number(3),
+                             classPlace nvarchar2(100),
+                             classExplanation nvarchar2(500)
+);
+
+CREATE TABLE oneday_class_info(
+                                  classNum number(6),
+                                  classApplicantsNum number(3),
+                                  memberNum number(6),
+                                  classPhone nvarchar2(20)
+);
+
+create sequence oneday_class_seq
+    start with 1
+    nocache;
+-------------------------------------
+
+
+
+CREATE TABLE order_info(
+    orderCode NUMBER(5) primary key,
+    memberNum NUMBER(6),
+    orderDate DATE,
+    orderType NUMBER(1),
+    CONSTRAINT order_memberNum_fk FOREIGN KEY(memberNum)
+    REFERENCES member(memberNum));
+
+CREATE SEQUENCE order_info_seq
+NOCACHE;
+
+CREATE TABLE product_info(
+    productCode NUMBER(10),
+    productName NVARCHAR2(100),
+    productQuantity NUMBER(12),
+    productPrice NUMBER(12),
+    productImg NVARCHAR2(300),
+    productContentImg NVARCHAR2(300),
+    CONSTRAINT productCode primary key (productCode),
+    CONSTRAINT productName UNIQUE(productName));
+
+CREATE SEQUENCE product_info_seq
+NOCACHE;
+
+CREATE TABLE product(
+    productCode NUMBER(10),
+    productType NUMBER(1),
+    CONSTRAINT productCode_fk FOREIGN KEY(productCode)
+    REFERENCES product_info(productCode)
+    on delete cascade);
+
+CREATE TABLE order_detail(
+    orderNum NUMBER(5),
+    orderCode NUMBER(5),
+    productCode NUMBER(10),
+    orderQuantity NUMBER(5),
+    orderDetailPrice NUMBER(12),
+    CONSTRAINT detail_orderCode_fk FOREIGN KEY(orderCode)
+    REFERENCES order_info(orderCode)
+    on delete cascade,
+    CONSTRAINT detail_productCode_fk FOREIGN KEY(productCode)
+    REFERENCES product_info(productCode)
+    on delete cascade);
+
+-----리뷰
+CREATE TABLE review(
+                       reviewNum number(5),
+                       userName NVARCHAR2(50),
+                       reviewContent NVARCHAR2(2000),
+                       imgSrc NVARCHAR2(2000),
+                       fileName NVARCHAR2(100)
+);
+
+create sequence review_seq
+    start with 1
+    nocache;
+
+CREATE TABLE payment(
+	payCode NUMBER(10) PRIMARY KEY,
+	payNumber NUMBER(10),
+	productCode NUMBER(10),
+	cartQuantity NUMBER(5),
+	price NUMBER(10),
+	imp_uid varchar2(30),
+	payStatus varchar2(30),
+	payDate DATE,
+	memberNum NUMBER(6),
+	use_mileage NUMBER(6),
+	save_mileage NUMBER(6),
+	CONSTRAINT payment_fk FOREIGN KEY(productCode)
+    REFERENCES product_info(productCode),
+    CONSTRAINT pay_memberNum_fk FOREIGN KEY(memberNum)
+    REFERENCES member(memberNum)
+);
+
+CREATE SEQUENCE payCode_seq
+nocache;
+
+CREATE SEQUENCE payNum_seq
+nocache;
+
+create table NOTICE_BOARD
+(
+    NOTICENUM     NUMBER(5) not null
+        primary key,
+    NOTICETITLE   NVARCHAR2(150),
+    NOTICECONTENT NVARCHAR2(2000),
+    NOTICECOUNT   NUMBER(5),
+    NOTICEDATE    DATE
+)

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.NoticeMapper">
+    <select id="selectAll" resultType="team.kyp.kypcoffee.domain.Notice">
+        select * from notice_board
+    </select>
+
+    <select id="selectPaging" parameterType="team.kyp.kypcoffee.domain.Paging" resultType="team.kyp.kypcoffee.domain.Notice">
+        SELECT *
+          FROM (SELECT ROWNUM AS RN, noticeNum, noticeTitle, noticeContent, noticeCount, noticeDate
+                  FROM (SELECT * FROM NOTICE_BOARD ORDER BY noticeNum DESC))
+         WHERE RN BETWEEN (#{section}-1)*100 + (#{pageNum}-1)*10 +1 and (#{section}-1)*100 + (#{pageNum}) * 10
+    </select>
+
+    <select id="selectAllNumber" resultType="int">
+        select COUNT(*) from NOTICE_BOARD
+    </select>
+
+    <insert id="insertAdminNotice" parameterType="team.kyp.kypcoffee.domain.NoticeCommand">
+        INSERT INTO NOTICE_BOARD VALUES(NOTICE_BOARD_SEQ.NEXTVAL, #{noticeTitle}, #{noticeContent}, 0, SYSDATE)
+    </insert>
+
+    <update id="viewCntInc" parameterType="int">
+        UPDATE NOTICE_BOARD
+        SET noticeCount = noticeCount+1
+        WHERE noticeNum = #{noticeNum}
+    </update>
+
+    <select id="selectByNoticeNum" parameterType="int" resultType="team.kyp.kypcoffee.domain.Notice">
+        SELECT * FROM NOTICE_BOARD
+        WHERE noticeNum = #{noticeNum}
+    </select>
+
+    <delete id="deleteByNoticeNum" parameterType="int">
+        DELETE FROM NOTICE_BOARD
+        WHERE noticeNum = #{noticeNum}
+    </delete>
+
+    <update id="updateByNoticeNum" parameterType="team.kyp.kypcoffee.domain.NoticeCommand">
+        UPDATE NOTICE_BOARD
+        SET noticeTitle = #{noticeTitle},
+            noticeContent = #{noticeContent}
+        WHERE noticeNum = #{noticeNum}
+    </update>
+
+</mapper>

@@ -1,0 +1,144 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>관리자 - 리뷰관리</title>
+
+    <style>
+        a {
+            text-decoration: none;
+            color: #5C3D2E;
+        }
+
+        a:hover {
+            color: #B85C38;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: admin-header"></div>
+    <section class="breadcrumbs">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Review Manage</h2>
+                <ol>
+                    <li><a href="index.html">Admin</a></li>
+                    <li>리뷰관리</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <br><br><br>
+
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="row justify-content-left">
+                    <div th:if="${reviewList.isEmpty()}" style="text-align: center"> 리뷰가 없습니다. </div>
+                    <div class="col-md-3 col-sm-3 col-xs-12 image-main-section" th:each="list :${reviewList}">
+                        <div class="row img-part">
+                            <div class="col-md-12 col-sm-12 colxs-12 img-section">
+                                <a th:href="@{/admin/reviewManage/detail/{reviewNum}(reviewNum = ${list.reviewNum})}">
+                                    <img class="reviewImg" th:src="|/reviewImg/${list.fileName}|">
+                                </a>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12 image-title" style="text-align: left">
+                                <h5>@[[${list.userName}]]</h5>
+                            </div>
+                        </div><br>
+                    </div>
+                </div><br><br><br>
+
+                <div style="text-align: center">
+                    <th:block th:switch="${totalCntJudge}">
+                        <th:block th:case="81">
+                            <th:block th:if="${(section)*80<totalCnt}">
+                                <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
+                                    <th:block th:if="${section >1 && page==1}">
+                                        <a th:href="@{/admin/reviewManage(section=${section}-1, pageNum=10)}"> << </a>
+                                    </th:block>
+                                    <a th:href="@{/admin/reviewManage(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                    <th:block th:if="${page==10}">
+                                        <a th:href="@{/admin/reviewManage(section=${section+1}, pageNum=1)}"> >> </a>
+                                    </th:block>
+                                </th:block>
+                            </th:block>
+
+                            <th:block th:if="${(section)*80>totalCnt}">
+                                <th:block th:each="page : ${#numbers.sequence(1, (((totalCnt+7)-((section)-1)*100)/8) ,1)}">
+                                    <th:block th:if="${section >1 && page==1}">
+                                        <a th:href="@{/admin/reviewManage(section=${(section)-1}, pageNum=10)}"> << </a>
+                                    </th:block>
+                                    <a th:href="@{/admin/reviewManage(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                </th:block>
+                            </th:block>
+
+                            <th:block th:if="${(section)*80==totalCnt}">
+                                <th:block th:each="page : ${#numbers.sequence(1, 10 ,1)}">
+                                    <th:block th:if="${section >1 && page==1}">
+                                        <a th:href="@{/admin/reviewManage(section=${(section)-1}, pageNum=10)}"> << </a>
+                                    </th:block>
+                                    <a th:href="@{/admin/reviewManage(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                </th:block>
+                            </th:block>
+
+                        </th:block>
+                        <th:block th:case="80">
+                            <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
+                                <a th:href="@{/admin/reviewManage(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
+                            </th:block>
+                        </th:block>
+                        <th:block th:case="79">
+                            <th:block th:each="page : ${#numbers.sequence(1,((totalCnt+7)/8),1)}">
+                                <a th:href="@{/admin/reviewManage(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
+                            </th:block>
+                        </th:block>
+                    </th:block>
+                </div><br>
+
+                <div style="text-align: right">
+                <input type="button" value="리뷰등록" th:onclick="|location.href='@{/admin/reviewManage/regist}'|" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">&nbsp;&nbsp;
+                </div>
+
+            </div>
+        </div>
+    <br><br><br>
+
+
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+    <script>
+        function updateForm(code){
+            console.log(code);
+            let productQuantity = document.getElementById('productQuantity'+code);
+            productQuantity.readOnly = false;
+
+            let update = document.getElementById('update'+code);
+            update.style.display = "none";
+
+            let check = document.getElementById('check'+code);
+            check.style.display = "block";
+        }
+
+        function updateDo(code){
+            console.log("updateDO Code" +  code);
+
+            let productQuantity = document.getElementById('productQuantity'+code);
+            let quantity = productQuantity.value;
+
+            console.log("quantity : " + quantity);
+
+            location.href="/admin/inventoryManage/update/"+code+"/"+quantity
+        }
+    </script>
+</body>
+</html>

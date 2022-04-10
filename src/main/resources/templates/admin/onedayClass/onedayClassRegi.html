@@ -1,0 +1,77 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>원데이클래스 등록</title>
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: admin-header"></div>
+
+    <section class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>OnedayClass Regi</h2>
+                <ol>
+                    <li><a href="index.html">Admin</a></li>
+                    <li>원데이클래스 등록</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <br><br><br>
+
+    <div class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-6 table-responsive">
+
+                <form th:action="@{/admin/adminOnedayClassOpen}" th:object="${onedayClassOpenCommand}" method="post">
+                    <table class="table table-sm text-center" >
+                        <tr>
+                            <td style="width:20%">날짜</td>
+                            <td>
+                                <input type="date" th:field="*{classDate}" class="form-control form-control-sm">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%">인원 수</td>
+                            <td>
+                                <input type="number" th:field="*{classCapacity}" value="1" min="1" max="100" class="form-control form-control-sm">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%">장소</td>
+                            <td>
+                                <input type="text" th:field="*{classPlace}" class="form-control form-control-sm">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%">설명</td>
+                            <td>
+                                <textarea class="form-control" th:field="*{classExplanation}" rows="10" name="content" placeholder="진행할 원데이클래스의 설명을 입력해주세요"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="text-align: right">
+                        <input type="button" value="목록" onclick="location.href='/admin/adminOnedayClass'" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">&nbsp;&nbsp;
+                        <input type="reset" value="다시쓰기" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">
+                        <input type="submit" value="OPEN" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <br><br><br>
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+    <meta charset="UTF-8">
+    <title>고윤박커피 / REVIEW</title>
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+</head>
+<body>
+<div th:replace="headerFooter.html :: top-bar"></div>
+<div th:replace="headerFooter.html :: main-header"></div>
+
+<section class="breadcrumbs">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Review</h2>
+            <ol>
+                <li><a href="/">메인으로</a></li>
+                <li>리뷰</li>
+            </ol>
+        </div>
+
+    </div>
+</section>
+<br><br><br>
+
+<div class="cotainer">
+    <div class="row justify-content-center">
+        <div class="col-md-6 table-responsive">
+            <h4>리뷰상세</h4>
+            <table class="table text-center">
+                <tr>
+                    <td style="width:20%; text-align: left;">리뷰번호</td>
+                    <td style="text-align: left">[[${reviewDetail.reviewNum}]]</td>
+                </tr>
+                <tr>
+                    <td style="width:20%; text-align: left;">리뷰어</td>
+                    <td style="text-align: left">@[[${reviewDetail.userName}]]</td>
+                </tr>
+                <tr>
+                    <td style="width:20%; text-align: left;">리뷰내용</td>
+                    <td style="text-align: left">[[${reviewDetail.reviewContent}]]</td>
+                </tr>
+                <tr>
+                    <td style="width:20%; text-align: left;">리뷰이미지</td>
+                    <td style="text-align: left"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <img style="width: 900px; max-width:100%; height:auto;" th:src="|/reviewImg/${reviewDetail.fileName}|">
+                    </td>
+                </tr>
+            </table><br><br>
+
+            <div style="text-align: right">
+            <input type="button" value="목록" th:onclick="|location.href='@{/review}'|" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">&nbsp;&nbsp;
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<br><br><br>
+<div th:replace="headerFooter.html :: footer"></div>
+<th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

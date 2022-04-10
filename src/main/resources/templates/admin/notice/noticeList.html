@@ -1,0 +1,120 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>관리자 공지사항관리</title>
+</head>
+
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: admin-header"></div>
+    <section class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Notice Manage</h2>
+                <ol>
+                    <li><a href="index.html">Admin</a></li>
+                    <li>공지사항 관리</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <br><br><br>
+
+    <div class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-6 table-responsive">
+
+                <table class="table text-center" >
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 10%">번호</th>
+                            <th style="width: 50%">제목</th>
+                            <th style="width: 15%">작성자</th>
+                            <th style="width: 10%">조회수</th>
+                            <th style="width: 15%">공지일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="list :${noticeList}">
+                            <td th:text="${list.noticeNum}"></td>
+                            <td><a th:href="@{/admin/adminNotice/detail/{noticeNum}(noticeNum=${list.noticeNum})}" th:text="${list.noticeTitle}"></a></td>
+                            <td> 관리자 </td>
+                            <td th:text="${list.noticeCount}"></td>
+                            <td th:text="${#dates.format(list.noticeDate,'yyyy-MM-dd')}"></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" style="text-align: center">
+                                <br>
+                                <th:block th:switch="${totalCntJudge}">
+                                    <th:block th:case="101">
+                                        <th:block th:if="${(section)*100<totalCnt}">
+                                            <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
+                                                <th:block th:if="${section >1 && page==1}">
+                                                    <a th:href="@{/admin/adminNotice(section=${section}-1, pageNum=10)}"> << </a>
+                                                </th:block>
+                                                <a th:href="@{/admin/adminNotice(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                                <th:block th:if="${page==10}">
+                                                    <a th:href="@{/admin/adminNotice(section=${section+1}, pageNum=1)}"> >> </a>
+                                                </th:block>
+                                            </th:block>
+                                        </th:block>
+
+                                        <th:block th:if="${(section)*100>totalCnt}">
+                                            <th:block th:each="page : ${#numbers.sequence(1, (((totalCnt+9)-((section)-1)*100)/10) ,1)}">
+                                                <th:block th:if="${section >1 && page==1}">
+                                                    <a th:href="@{/admin/adminNotice(section=${(section)-1}, pageNum=10)}"> << </a>
+                                                </th:block>
+                                                <a th:href="@{/admin/adminNotice(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                            </th:block>
+                                        </th:block>
+
+                                        <th:block th:if="${(section)*100==totalCnt}">
+                                            <th:block th:each="page : ${#numbers.sequence(1, 10 ,1)}">
+                                                <th:block th:if="${section >1 && page==1}">
+                                                    <a th:href="@{/admin/adminNotice(section=${(section)-1}, pageNum=10)}"> << </a>
+                                                </th:block>
+                                                <a th:href="@{/admin/adminNotice(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                            </th:block>
+                                        </th:block>
+
+                                    </th:block>
+                                    <th:block th:case="100">
+                                        <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
+                                            <a th:href="@{/admin/adminNotice(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
+                                        </th:block>
+                                    </th:block>
+                                    <th:block th:case="99">
+                                        <th:block th:each="page : ${#numbers.sequence(1,((totalCnt+9)/10),1)}">
+                                            <a th:href="@{/admin/adminNotice(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
+                                        </th:block>
+                                    </th:block>
+                                </th:block>
+                                <br><br><br>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div style="text-align: right">
+                    <input type="button" th:value="등록" th:onclick="|location.href='@{/admin/adminNotice/regist}'|" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br><br><br>
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

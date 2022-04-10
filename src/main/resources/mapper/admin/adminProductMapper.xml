@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.admin.AdminProductMapper">
+
+    <insert id="insertAdminProduct" parameterType="team.kyp.kypcoffee.domain.AdminProductRegiCommand">
+        INSERT INTO PRODUCT_INFO VALUES (PRODUCT_INFO_SEQ.nextval, #{productName} , #{productQuantity} , #{productPrice} , NULL, NULL, #{imgName} , #{contentImgName})
+    </insert>
+
+    <insert id="insertAdminProductType" parameterType="int">
+        INSERT INTO PRODUCT VALUES(PRODUCT_INFO_SEQ.CURRVAL, #{productType})
+    </insert>
+
+
+</mapper>

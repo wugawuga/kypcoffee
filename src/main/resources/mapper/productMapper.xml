@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.ProductListMapper">
+
+    <select id="selectProductList" parameterType="team.kyp.kypcoffee.domain.Paging" resultType="team.kyp.kypcoffee.domain.Product_info">
+        SELECT *
+        FROM (SELECT ROWNUM AS RN, PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, productimg, IMGNAME, CONTENTIMGNAME, PRODUCTTYPE
+              FROM (SELECT A.PRODUCTCODE, A.PRODUCTNAME, A.PRODUCTPRICE, a.productimg, A.IMGNAME, A.CONTENTIMGNAME, B.PRODUCTTYPE
+                    FROM PRODUCT_INFO A JOIN PRODUCT B ON (A.PRODUCTCODE = B.PRODUCTCODE)
+                    ORDER BY B.PRODUCTTYPE, A.PRODUCTCODE))
+        WHERE RN BETWEEN (#{section}-1)*80 + (#{pageNum}-1)*8 +1 and (#{section}-1)*80 + (#{pageNum}) * 8
+    </select>
+
+    <select id="selectAllCnt" resultType="int">
+        SELECT COUNT(*) FROM PRODUCT_INFO A JOIN PRODUCT B ON (A.PRODUCTCODE = B.PRODUCTCODE)
+    </select>
+
+    <select id="selectProductListByNum" parameterType="team.kyp.kypcoffee.domain.Paging" resultType="team.kyp.kypcoffee.domain.Product_info">
+        SELECT *
+        FROM (SELECT ROWNUM AS RN, PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, productimg, IMGNAME, CONTENTIMGNAME, PRODUCTTYPE
+              FROM (SELECT A.PRODUCTCODE, A.PRODUCTNAME, A.PRODUCTPRICE, a.productimg, A.IMGNAME, A.CONTENTIMGNAME, B.PRODUCTTYPE
+                    FROM PRODUCT_INFO A JOIN PRODUCT B ON (A.PRODUCTCODE = B.PRODUCTCODE) WHERE B.productType = #{productType}
+                    ORDER BY B.PRODUCTTYPE, A.PRODUCTCODE))
+        WHERE RN BETWEEN (#{section}-1)*80 + (#{pageNum}-1)*8 +1 and (#{section}-1)*80 + (#{pageNum}) * 8
+    </select>
+
+    <select id="selectAllCntByNum" resultType="int">
+        SELECT COUNT(*) FROM PRODUCT_INFO A JOIN PRODUCT B ON (A.PRODUCTCODE = B.PRODUCTCODE) WHERE B.productType = #{productType}
+    </select>
+
+    <select id="selectType" parameterType="int" resultType="team.kyp.kypcoffee.domain.Product_info">
+        SELECT p.*,pt.*
+        FROM product_info p left outer join product pt on (p.productCode = pt.productCode)
+        WHERE pt.productType = #{productType}
+    </select>
+
+    <select id="selectByCode" parameterType="Long" resultType="team.kyp.kypcoffee.domain.Product_info">
+        SELECT p.*,pt.*
+        FROM product_info p left outer join product pt on (p.productCode = pt.productCode)
+        WHERE p.productCode = #{productCode}
+    </select>
+
+</mapper>

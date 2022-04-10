@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <meta charset="UTF-8">
+    <title>사업자 인증</title>
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
+
+
+    <style>
+body {
+  background: #2D2424;
+  background: linear-gradient(to right, #2D2424, #5c3d2e);
+}
+
+.btn-login {
+  font-size: 0.9rem;
+  letter-spacing: 0.05rem;
+  padding: 0.75rem 1rem;
+}
+
+    </style>
+
+</head>
+
+<body>
+<br>
+    <div class="container">
+        <div class="row">
+          <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card border-0 shadow rounded-3 my-5">
+              <div class="card-body p-4 p-sm-5">
+                <h5 class="card-title text-center mb-5 fw-light fs-5">사업자 인증</h5>
+                <form id="business" method="GET">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="license" name="license" placeholder="사업자 번호 숫자 10자리를 입력하세요">
+                  </div>
+                   
+                  <div class="d-grid">
+                    <button type="button" class="btn btn-login btn-block text-uppercase fw-bold" onclick="businessNumber()" style="background-color: #d7b19d; border: 0;"> <i class="fas fa-user-friends"></i> 사업자 인증
+                      </button>
+                  </div>
+                  <hr class="my-4">
+                  <div class="d-grid mb-2">
+                    <button type="button" class="btn btn-login btn-block text-uppercase fw-bold"
+                            style="background-color: #865439; border: 0; color:white" onclick="businessRegi()"> <i class="fa fa-chevron-right fa-lg"></i> 다음으로
+                    </button>
+                      <div id="regimessage" style="text-align: center"></div>
+                  </div>
+             
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<script>
+    function businessNumber(){ //사업자번호 인증 API 이용
+        let num = document.getElementById('license').value; //사업자번호
+        const data = {
+            "b_no": [num] //폼 넘버 가져오기-기본 형식
+        };
+        console.log(data);
+        $.ajax({
+                url: "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=xEE9ZCTcOO1J6QkgVLphprGiK22xnGUHzJd9IIbs94TSdM9AXoqQIaS7HYvz9zPUZG1SuAPmdae06SwXkWcTuA%3D%3D",  // serviceKey 값을 xxxxxx에 입력
+                type: "POST",
+                data: JSON.stringify(data), // json 을 string으로 변환하여 전송
+                dataType: "JSON",
+                contentType: "application/json",
+                accept: "application/json",
+                success: function(result) {
+                    //console.log(data.b_no);
+                    //console.log(result.data[0]); 전체객체 뽑기
+                     console.log(result.data[0]['b_stt_cd']); //사업자 01 번 호출
+                    let valid = result.data[0]['b_stt_cd'];
+
+                    if (valid=='01'){
+                        msg1();
+                    }else {
+                        msg2();
+                    }
+
+                },
+                error: function(result) {
+                    console.log(result.responseText); //responseText의 에러메세지 확인
+                }
+            });
+
+    }
+
+    function msg1(){
+        let msg = document.getElementById('regimessage');
+        msg.innerHTML = "<br>사업자 회원가입이 가능합니다.";
+    }
+
+    function msg2(){
+        let msg = document.getElementById('regimessage');
+        msg.innerHTML = "<br>사업자 회원가입을 할 수 없습니다.";
+
+    }
+
+    function businessRegi(){ //다음으로 버튼 누르면 사업자일시 회원가입으로 이동.
+        let num = document.getElementById('license').value; //사업자번호
+        const data = {
+            "b_no": [num]
+        };
+        $.ajax({
+            url: "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=xEE9ZCTcOO1J6QkgVLphprGiK22xnGUHzJd9IIbs94TSdM9AXoqQIaS7HYvz9zPUZG1SuAPmdae06SwXkWcTuA%3D%3D",  // serviceKey 값을 xxxxxx에 입력
+            type: "POST",
+            data: JSON.stringify(data),
+            dataType: "JSON",
+            contentType: "application/json",
+            accept: "application/json",
+            success: function(result) {
+
+                let valid = result.data[0]['b_stt_cd'];
+
+                if (valid=='01'){
+                    alert("사업자 인증에 성공했습니다.");
+                    opener.parent.location='../register/businessRegister';
+                    window.close();
+                }else {
+                    alert("사업자가 아닙니다. 사업자 회원가입을 진행할수 없습니다.");
+                    opener.parent.location='../register/agreement';
+                    window.close();
+                }
+
+                },
+            error: function(result) {
+                alert("에러가 발생했습니다.");
+            }
+        });
+    }
+
+
+</script>
+
+</body>
+</html>

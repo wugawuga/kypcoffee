@@ -1,0 +1,95 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>관리자 상품등록</title>
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: admin-header"></div>
+
+    <section class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>상품 등록</h2>
+                <ol>
+                    <li><a href="index.html">Admin</a></li>
+                    <li>Notice Regi</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+
+    <br><br><br>
+    <div class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-6 table-responsive">
+
+            <form  th:action="@{/admin/adminProductRegi}" th:object="${adminProductRegiCommand}" method="post" enctype="multipart/form-data">
+                <table class="table table-sm text-center" >
+                    <tr>
+
+                    <tr>
+                        <td style="width:20%">타입</td>
+                        <td style="text-align: left"><select th:field="*{productType}" required >
+                            <option th:value="0">선택</option>
+                            <option th:value="1">원두</option>
+                            <option th:value="2">컵/텀블러</option>
+                            <option th:value="3">시럽</option>
+                            <option th:value="4">선물</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>이름</td>
+                        <td>
+                            <input type="text" th:field="*{productName}" class="form-control form-control-sm">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>수량</td>
+                        <td>
+                            <input type="text" th:field="*{productQuantity}" class="form-control form-control-sm">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>가격</td>
+                        <td>
+                            <input type="text" th:field="*{productPrice}" class="form-control form-control-sm">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>상품이미지</td>
+                        <td style="text-align: left">
+                            <input type="file" th:field="*{productImg}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>내용이미지</td>
+                        <td style="text-align: left">
+                            <input type="file" th:field="*{productContentImg}">
+                        </td>
+                    </tr>
+                </table>
+                <div style="text-align: right">
+                    <input type="button" value="목록" onclick="location.href='/admin/productManage'" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">&nbsp;&nbsp;
+                    <input type="reset" value="다시쓰기" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">&nbsp;&nbsp;
+                    <input type="submit" value="전송" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">
+                </div>
+            </form>
+
+        </div>
+        </div>
+    </div>
+    <br><br><br>
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

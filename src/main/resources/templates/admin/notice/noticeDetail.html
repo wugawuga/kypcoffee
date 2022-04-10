@@ -1,0 +1,89 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>관리자 공지상세보기</title>
+
+</head>
+
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: admin-header"></div>
+
+    <section class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Admin Notice Detail</h2>
+                <ol>
+                    <li><a href="index.html">Admin</a></li>
+                    <li>공지사항 상세</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <br><br><br>
+
+    <div class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-6 table-responsive">
+                <form th:object="${noticeCommand}" th:action="@{/admin/adminNotice/update}" method="post">
+                <table class="table text-center" >
+                    <tr>
+                        <td style="width:20%">글번호</td>
+                        <td style="text-align: left">
+                            [[${noticeList.noticeNum}]]
+                            <input type="hidden" id="noticeNum" name="noticeNum" th:value="${noticeList.noticeNum}">
+                        </td>
+                        <td style="width:20%">작성일</td>
+                        <td style="text-align: left">
+                            [[${#dates.format(noticeList.noticeDate,'yyyy-MM-dd')}]]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:20%">제목</td>
+                        <td colspan="3" style="text-align: left">
+                            <input style="width: 350px;" type="text" id="noticeTitle" name="noticeTitle" th:value="${noticeList.noticeTitle}" readonly="readonly"> <br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align:left; padding-left: 90px;">
+                            <textarea style="height: 400px;" id="noticeContent" name="noticeContent" class="form-control" th:text="${noticeList.noticeContent}" readonly="readonly"></textarea> <br>
+                        </td>
+                    </tr>
+                </table><br>
+
+                <div style="text-align: right">
+                    <input type="button" value="목록" onclick="location.href='/admin/adminNotice'" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">&nbsp;&nbsp;
+                    <input type="button" id="updateFormBtn" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;" value="수정" onclick="updateForm()">
+                    <input type="hidden" id="updateDo" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;" value="수정">
+                    <a th:href="@{/admin/adminNotice/delete/{noticeNum}(noticeNum=${noticeList.noticeNum})}">
+                        <input type="button" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;" value="삭제">
+                    </a>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <br><br><br>
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+
+    <script>
+        function updateForm(){
+            document.getElementById('noticeTitle').readOnly=false;
+            document.getElementById('noticeContent').readOnly=false;
+            document.getElementById('updateFormBtn').setAttribute("type", "hidden");
+            document.getElementById('updateDo').setAttribute("type", "submit");
+        }
+    </script>
+</body>
+</html>

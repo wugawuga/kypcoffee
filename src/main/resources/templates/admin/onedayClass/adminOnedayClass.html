@@ -1,0 +1,127 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>원데이클래스 관리</title>
+</head>
+
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: admin-header"></div>
+
+    <section class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Oneday Class</h2>
+                <ol>
+                    <li>원데이클래스</li>
+                    <li>관리자</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <br><br><br>
+
+    <div class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-6 table-responsive">
+
+            <div>
+                <div th:if="${onedaylist.isEmpty()}" style="text-align: center;">
+                    등록된 원데이클래스가 없습니다.
+                </div>
+                <div class="onedayList" th:each="list :${onedaylist}">
+                    <div class="onedayView">
+                        <div class="onedayTitle">
+                            [[${list.classNum}]]회차 Oneday Class
+                        </div>
+                        <hr style="color:#865439">
+                        <div class="onedayDate">
+                            날짜 : [[${#dates.format(list.classDate,'yyyy-MM-dd')}]]<br>
+                            장소 : [[${list.classPlace}]]<br>
+                            모집인원 : [[${list.classCapacity}]]
+                        </div>
+                        <div class="onedayCapacity">
+                            <div class="capacity">
+                                설명 : [[${list.classExplanation}]]
+                            </div>
+                            <a class="onedayRegiIcon" th:href="@{/admin/adminOnedayClass/Detail/{classNum}(classNum=${list.classNum})}">
+                                <i class="fas fa-search"></i>
+                            </a>
+                            <a th:href="@{/admin/adminOnedayClass/delete/{classNum}(classNum=${list.classNum})}">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center">
+                    <th:block th:switch="${totalCntJudge}">
+                        <th:block th:case="101">
+                            <th:block th:if="${(section)*100<totalCnt}">
+                                <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
+                                    <th:block th:if="${section >1 && page==1}">
+                                        <a th:href="@{/admin/adminOnedayClass(section=${section}-1, pageNum=10)}"> << </a>
+                                    </th:block>
+                                    <a th:href="@{/admin/adminOnedayClass(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                    <th:block th:if="${page==10}">
+                                        <a th:href="@{/admin/adminOnedayClass(section=${section+1}, pageNum=1)}"> >> </a>
+                                    </th:block>
+                                </th:block>
+                            </th:block>
+
+                            <th:block th:if="${(section)*100>totalCnt}">
+                                <th:block th:each="page : ${#numbers.sequence(1, (((totalCnt+9)-((section)-1)*100)/10) ,1)}">
+                                    <th:block th:if="${section >1 && page==1}">
+                                        <a th:href="@{/admin/adminOnedayClass(section=${(section)-1}, pageNum=10)}"> << </a>
+                                    </th:block>
+                                    <a th:href="@{/admin/adminOnedayClass(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                </th:block>
+                            </th:block>
+
+                            <th:block th:if="${(section)*100==totalCnt}">
+                                <th:block th:each="page : ${#numbers.sequence(1, 10 ,1)}">
+                                    <th:block th:if="${section >1 && page==1}">
+                                        <a th:href="@{/admin/adminOnedayClass(section=${(section)-1}, pageNum=10)}"> << </a>
+                                    </th:block>
+                                    <a th:href="@{/admin/adminOnedayClass(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                </th:block>
+                            </th:block>
+
+                        </th:block>
+                        <th:block th:case="100">
+                            <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
+                                <a th:href="@{/admin/adminOnedayClass(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
+                            </th:block>
+                        </th:block>
+                        <th:block th:case="99">
+                            <th:block th:each="page : ${#numbers.sequence(1,((totalCnt+9)/10),1)}">
+                                <a th:href="@{/admin/adminOnedayClass(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
+                            </th:block>
+                        </th:block>
+                    </th:block>
+                </div>
+
+                <div style="text-align: right">
+                    <input type="button" th:value="등록" th:onclick="|location.href='@{/admin/adminOnedayClass/regist}'|" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">
+                </div>
+
+            </div>
+
+            </div>
+        </div>
+    </div>
+
+    <br><br><br>
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

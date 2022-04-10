@@ -1,0 +1,94 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>리뷰상세관리</title>
+</head>
+
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: admin-header"></div>
+    <section class="breadcrumbs">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Review Detail Manage</h2>
+                <ol>
+                    <li><a href="index.html">Admin</a></li>
+                    <li>리뷰관리상세</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <br><br><br>
+
+    <div class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-6 table-responsive">
+                <h4>리뷰상세</h4>
+                <table class="table text-center">
+                    <tr>
+                        <td style="width:20%; text-align: left;">리뷰번호</td>
+                        <td style="text-align: left">[[${reviewDetail.reviewNum}]]</td>
+                    </tr>
+                    <tr>
+                        <td style="width:20%; text-align: left;">리뷰어</td>
+                        <td style="text-align: left">@[[${reviewDetail.userName}]]</td>
+                    </tr>
+                    <tr>
+                        <td style="width:20%; text-align: left;">리뷰내용</td>
+                        <td style="text-align: left">[[${reviewDetail.reviewContent}]]</td>
+                    </tr>
+                    <tr>
+                        <td style="width:20%; text-align: left;">리뷰이미지</td>
+                        <td style="text-align: left"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img style="width: 900px; max-width:100%; height:auto;" th:src="|/reviewImg/${reviewDetail.fileName}|">
+                        </td>
+                    </tr>
+                </table><br><br>
+
+                <div style="text-align: right">
+                    <input type="button" value="삭제" th:onclick="|location.href='@{/admin/reviewManage/delete/{reviewNum}(reviewNum = ${reviewDetail.reviewNum})}'|" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">&nbsp;&nbsp;
+                    <input type="button" value="목록" th:onclick="|location.href='@{/admin/reviewManage}'|" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">&nbsp;&nbsp;
+                </div>
+            </div>
+        </div>
+
+
+    </div><br><br><br>
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+    <script>
+        function updateForm(code){
+            console.log(code);
+            let productQuantity = document.getElementById('productQuantity'+code);
+            productQuantity.readOnly = false;
+
+            let update = document.getElementById('update'+code);
+            update.style.display = "none";
+
+            let check = document.getElementById('check'+code);
+            check.style.display = "block";
+        }
+
+        function updateDo(code){
+            console.log("updateDO Code" +  code);
+
+            let productQuantity = document.getElementById('productQuantity'+code);
+            let quantity = productQuantity.value;
+
+            console.log("quantity : " + quantity);
+
+            location.href="/admin/inventoryManage/update/"+code+"/"+quantity
+        }
+    </script>
+</body>
+</html>

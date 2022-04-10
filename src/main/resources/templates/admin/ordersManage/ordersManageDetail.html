@@ -1,0 +1,66 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>주문관리상세</title>
+</head>
+
+<body>
+<div th:replace="headerFooter.html :: top-bar"></div>
+<div th:replace="headerFooter.html :: admin-header"></div>
+<section class="breadcrumbs">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Orders Manage Detail</h2>
+            <ol>
+                <li><a href="index.html">Admin</a></li>
+                <li>주문관리상세</li>
+            </ol>
+        </div>
+
+    </div>
+</section><!-- End Breadcrumbs -->
+<br><br><br>
+
+<div class="cotainer">
+    <div class="row justify-content-center">
+        <div class="col-md-6 table-responsive">
+
+            <h4>주문관리상세</h4>
+            <table class="table text-center" >
+                <tr>
+                    <th style="width: 50%">주문상품</th>
+                    <th style="width: 10%">수량</th>
+                    <th style="width: 10%">가격</th>
+                    <th style="width: 15%">주문날짜</th>
+                    <th style="width: 15%">주문상태</th>
+                </tr>
+                <tr th:each="list :${list}">
+                    <td>[[${list.productName}]]</td>
+                    <td>[[${list.cartQuantity}]]</td>
+                    <td>[[${list.price}]]</td>
+                    <td>[[${#dates.format(list.payDate,'yyyy-MM-dd')}]]</td>
+                    <td>[[${list.payStatus}]]</td>
+                </tr>
+            </table>
+
+            <div style="text-align: center">
+                <input type="button" th:value="목록으로" th:onclick="|location.href='@{/admin/ordersManage}'|" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">
+                <input th:if="${list.get(0).payStatus eq '환불 대기 중'}" type="button" th:onclick="|location.href='@{/admin/ordersManage/refund/{payNumber} (payNumber=${list.get(0).payNumber})}'|" value="환불하기" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<br><br><br>
+<div th:replace="headerFooter.html :: footer"></div>
+<th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

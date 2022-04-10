@@ -1,0 +1,88 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>상품관리 상세</title>
+    <style>
+        a {
+            text-decoration: none;
+            color: #5C3D2E;
+        }
+
+        a:hover {
+            color: #B85C38;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: admin-header"></div>
+    <section class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Product Manage Detail</h2>
+                <ol>
+                    <li><a href="index.html">Admin</a></li>
+                    <li>상품관리상세</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+
+    <section class="inner-page">
+        <div class="cotainer">
+            <div class="row justify-content-center">
+                <div class="col-md-6 table-responsive">
+                    <h4>상품관리상세</h4>
+                    <table class="table text-center">
+                        <tr>
+                            <td style="width:30%; text-align: left;">상품타입</td>
+                            <td style="text-align: left">[[${detail.productType}]]</td>
+                        </tr>
+                        <tr>
+                            <td style="width:30%; text-align: left;">상품코드</td>
+                            <td style="text-align: left">[[${detail.productCode}]]</td>
+                        </tr>
+                        <tr>
+                            <td style="width:30%; text-align: left;">상품이름</td>
+                            <td style="text-align: left">[[${detail.productName}]]</td>
+                        </tr>
+                        <tr>
+                            <td style="width:30%; text-align: left;">상품가격</td>
+                            <td style="text-align: left">[[${detail.productPrice}]]</td>
+                        </tr>
+                        <tr>
+                            <td style="width:30%; text-align: left;">상품이미지</td>
+                            <td style="text-align: left"><img th:src="|/productImg/${detail.imgName}|" style="width: 250px;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:30%; text-align: left;">내용이미지</td>
+                            <td style="text-align: left"><img th:src="|/productImg/${detail.contentImgName}|" style="width: 800px;"></td>
+                        </tr>
+                    </table><br><br>
+
+                    <div style="text-align: right">
+            <input type="button" th:value="수정" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;" th:onclick="|location.href='@{/admin/productManage/update/{productCode}(productCode=${detail.productCode})}'|">
+            <input type="button" th:value="삭제" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;" th:onclick="|location.href='@{/admin/productManage/delete/{productCode}(productCode=${detail.productCode})}'|">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section><br><br><br>
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

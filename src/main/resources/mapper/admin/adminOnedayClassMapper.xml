@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.admin.AdminOnedayClassMapper">
+
+    <insert id="insertOnedayClassOpen" parameterType="team.kyp.kypcoffee.domain.admin.OnedayClassOpenCommand">
+        INSERT INTO ONEDAY_CLASS VALUES (ONEDAY_CLASS_SEQ.nextval, TO_DATE(#{classDate}, 'YYYY-MM-DD'), #{classCapacity}, #{classPlace},  #{classExplanation})
+    </insert>
+
+    <select id="selectPaging" parameterType="team.kyp.kypcoffee.domain.Paging" resultType="team.kyp.kypcoffee.domain.admin.OnedayClass">
+        SELECT *
+        FROM (SELECT ROWNUM AS RN, CLASSNUM, CLASSDATE, CLASSCAPACITY, CLASSPLACE, CLASSEXPLANATION
+              FROM (SELECT * FROM ONEDAY_ClASS ORDER BY CLASSNUM DESC))
+        WHERE RN BETWEEN (#{section}-1)*100 + (#{pageNum}-1)*10 +1 and (#{section}-1)*100 + (#{pageNum}) * 10
+    </select>
+
+    <select id="selectAllNumber" resultType="int">
+        SELECT COUNT(*) FROM ONEDAY_ClASS
+    </select>
+
+    <select id="selectClassByNum" parameterType="int" resultType="team.kyp.kypcoffee.domain.admin.OnedayClassApplierInfo">
+        SELECT A.CLASSNUM,
+               A.CLASSDATE,
+               A.CLASSCAPACITY,
+               B.CLASSAPPLICANTSNUM,
+               B.MEMBERNUM,
+               B.classPhone,
+               C.MEMBERNAME,
+               C.MEMBERADDRESS,
+               C.MEMBEREMAIL
+        FROM ONEDAY_ClASS A JOIN ONEDAY_CLASS_INFO B ON (A.CLASSNUM = B.CLASSNUM)
+                            JOIN MEMBER C ON (B.MEMBERNUM = C.MEMBERNUM)
+        WHERE A.CLASSNUM = #{CLASSNUM}
+    </select>
+
+    <delete id="deleteApplierByNum" parameterType="team.kyp.kypcoffee.domain.admin.OnedayDelete">
+        DELETE FROM ONEDAY_CLASS_INFO
+        WHERE MEMBERNUM = #{memberNum}
+        AND CLASSNUM = #{classNum}
+    </delete>
+
+    <delete id="deleteClass" parameterType="int">
+        DELETE FROM ONEDAY_CLASS
+        WHERE CLASSNUM = #{classNum}
+    </delete>
+
+
+</mapper>

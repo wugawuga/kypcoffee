@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+    <meta charset="UTF-8">
+    <title>고윤박커피 / 마이페이지</title>
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <script>
+        function changeStatus() {
+
+            return confirm('환불하시겠어요?');
+        }
+    </script>
+
+</head>
+<body>
+<div th:replace="headerFooter.html :: top-bar"></div>
+<div th:replace="headerFooter.html :: main-header"></div>
+
+<section class="breadcrumbs">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>My Page</h2>
+            <ol>
+                <li><a th:href="@{/}">메인으로</a></li>
+                <li><a th:href="@{/updateInfo}">회원정보수정</a></li>
+                <li><a th:href="@{/cartList}"><i class="fas fa-shopping-cart"></i></a></li>
+            </ol>
+        </div>
+
+    </div>
+</section>
+<br><br><br>
+
+<div class="cotainer">
+    <div class="row justify-content-center">
+        <div class="col-md-6 table-responsive">
+            <h5>주문 내역</h5>
+            <table class="table text-center" >
+                <tr>
+                    <th style="width: 10%">주문번호</th>
+                    <th style="width: 50%">주문상품</th>
+                    <th style="width: 10%">수량</th>
+                    <th style="width: 15%">주문날짜</th>
+                    <th style="width: 15%">주문상태</th>
+                </tr>
+                <th:block th:if="${!payCount.isEmpty()}" th:each="cnt : ${payCount}">
+                    <th:block th:each="list,index :${payment}">
+                        <th:block th:if="${cnt.payNumber == list.payNumber}">
+                            <tr>
+                                <td th:if="${list.groupNumber == 1}" th:text="${list.payNumber}" th:rowspan="${cnt.count}"></td>
+                                <td th:text="${list.productName}"></td>
+                                <td th:text="${list.cartQuantity}"></td>
+                                <td th:if="${list.groupNumber == 1}" th:text="${#dates.format(list.payDate,'yyyy-MM-dd')}" th:rowspan="${cnt.count}"></td>
+                                <td th:if="${list.groupNumber == 1}" th:rowspan="${cnt.count}">
+                                    [[${list.payStatus}]] <br>
+                                    <a onclick="return changeStatus();" th:href="@{/pays/refund(imp_uid=${list.imp_uid})}" th:if="${list.payStatus eq '결제완료'}">환불신청</a>
+                                </td>
+                            </tr>
+                        </th:block>
+                    </th:block>
+                </th:block>
+
+                <tr th:unless="${!payCount.isEmpty()}">
+                    <td colspan="5">주문내역이 없습니다.</td>
+                </tr>
+            </table>
+            <br><hr><br>
+        </div>
+    </div>
+</div>
+
+<!--큐엔에이-->
+
+<div class="cotainer">
+    <div class="row justify-content-center">
+        <div class="col-md-6 table-responsive">
+            <h5>QNA 내역</h5>
+            <table class="table text-center" >
+                <tr>
+                    <th style="width: 15%">번호</th>
+                    <th style="width: 60%">제목</th>
+                    <th style="width: 25%">작성일</th>
+                </tr>
+                <tr th:if="${!boardList.isEmpty()}" th:each="list :${boardList}">
+                    <td th:text="${list.qnaBoardNum}" style="width: 15%"></td>
+                    <td style="text-align: left;width: 60%;"><a th:href="@{/mypage/{qnaBoardNum}(qnaBoardNum=${list.qnaBoardNum})}" th:text="${list.qnaBoardTitle}"></a></td>
+                    <td th:text="${#dates.format(list.qnaBoardDate,'yyyy-MM-dd')}" style="width: 25%"></td>
+                </tr>
+                <tr th:unless="${!boardList.isEmpty()}">
+                    <td colspan="5">작성된 QNA 내역이 없습니다.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<br><br><br>
+<div th:replace="headerFooter.html :: footer"></div>
+<th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>매출상세</title>
+</head>
+
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: admin-header"></div>
+    <section class="breadcrumbs">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>SalesStatus Detail</h2>
+                <ol>
+                    <li><a th:href="@{/admin}">Admin</a></li>
+                    <li><a th:href="@{/admin/salesStatus}">일별매출</a></li>
+                    <li><a th:href="@{/admin/salesStatus/month}">월별매출</a></li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <br><br><br>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 table-responsive">
+
+                <h4 style="text-align: center">매출현황 상세</h4>
+
+                <div class="card border-0 shadow rounded-3 my-5">
+                    <div class="status-inner">
+                        <div class="statusTitle">
+                            [[${payDate}]]
+                        </div>
+                        <hr>
+                        <fieldset th:if="${!coffeeList.isEmpty()}">
+                            <legend>원두</legend>
+                            <div class="status-box" th:each="list, i:${coffeeList}">
+                                <div class="block-box" th:if="${i.last}">
+                                    <hr style="border-top: 1px dotted #bbb;">
+                                </div>
+                                <div class="status-category">
+                                    [[${list.productName}]]
+                                </div>
+                                <div>
+                                    [[${list.cartQuantity}]]
+                                </div>
+                                <div class="status-sum">
+                                <span th:if="${!i.last}">
+                                    [[${#numbers.formatInteger(list.price, 0, 'COMMA')}]] 원
+                                </span>
+                                    <span th:unless="${!i.last}" style="font-size:20px; font-weight: bolder">
+                                    [[${#numbers.formatInteger(list.price, 0, 'COMMA')}]] 원
+                                </span>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset th:if="${!cupTumblerList.isEmpty()}">
+                            <legend>컵/텀블러</legend>
+                            <div class="status-box" th:each="list, i:${cupTumblerList}">
+                                <div class="block-box" th:if="${i.last}">
+                                    <hr style="border-top: 1px dotted #bbb;">
+                                </div>
+                                <div class="status-category">
+                                    [[${list.productName}]]
+                                </div>
+                                <div>
+                                    [[${list.cartQuantity}]]
+                                </div>
+                                <div class="status-sum">
+                                <span th:if="${!i.last}">
+                                    [[${#numbers.formatInteger(list.price, 0, 'COMMA')}]] 원
+                                </span>
+                                    <span th:unless="${!i.last}" style="font-size:20px; font-weight: bolder">
+                                    [[${#numbers.formatInteger(list.price, 0, 'COMMA')}]] 원
+                                </span>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset th:if="${!syrupList.isEmpty()}">
+                            <legend>시럽</legend>
+                            <div class="status-box" th:each="list, i:${syrupList}">
+                                <div class="block-box" th:if="${i.last}">
+                                    <hr style="border-top: 1px dotted #bbb;">
+                                </div>
+                                <div class="status-category">
+                                    [[${list.productName}]]
+                                </div>
+                                <div>
+                                    [[${list.cartQuantity}]]
+                                </div>
+                                <div class="status-sum">
+                                <span th:if="${!i.last}">
+                                    [[${#numbers.formatInteger(list.price, 0, 'COMMA')}]] 원
+                                </span>
+                                    <span th:unless="${!i.last}" style="font-size:20px; font-weight: bolder">
+                                    [[${#numbers.formatInteger(list.price, 0, 'COMMA')}]] 원
+                                </span>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset th:if="${!giftSetList.isEmpty()}">
+                            <legend>선물세트</legend>
+                            <div class="status-box" th:each="list, i:${giftSetList}">
+                                <div class="block-box" th:if="${i.last}">
+                                    <hr style="border-top: 1px dotted #bbb;">
+                                </div>
+                                <div class="status-category">
+                                    [[${list.productName}]]
+                                </div>
+                                <div>
+                                    [[${list.cartQuantity}]]
+                                </div>
+                                <div class="status-sum">
+                                <span th:if="${!i.last}">
+                                    [[${#numbers.formatInteger(list.price, 0, 'COMMA')}]] 원
+                                </span>
+                                    <span th:unless="${!i.last}" style="font-size:20px; font-weight: bolder">
+                                    [[${#numbers.formatInteger(list.price, 0, 'COMMA')}]] 원
+                                </span>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset th:if="${!totalList.isEmpty()}">
+                            <legend>총계</legend>
+                            <div class="status-box" th:each="list, i:${totalList}">
+                                <div class="block-box" th:if="${i.last}">
+                                    <hr style="border-top: 1px dotted #bbb;">
+                                </div>
+                                <div class="status-category">
+                                    총 계 :
+                                </div>
+                                <div>
+                                    [[${list.cartQuantity}]]
+                                </div>
+                                <div class="status-sum">
+                                <span th:if="${!i.last}">
+                                    [[${#numbers.formatInteger(list.price, 0, 'COMMA')}]] 원
+                                </span>
+                                    <span th:unless="${!i.last}" style="font-size:20px; font-weight: bolder">
+                                    [[${#numbers.formatInteger(list.price, 0, 'COMMA')}]] 원
+                                </span>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br><br><br>
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.QnaBoardMapper">
+
+    <sql id="selectAll">
+        SELECT * FROM qna_board
+    </sql>
+
+    <select id="selectAllList" resultType="team.kyp.kypcoffee.domain.QnaBoard">
+        SELECT qnaBoardNum, b.memberNum, m.memberName, qnaBoardTitle, qnaBoardDate, qnaBoardContent
+        FROM qna_board b left outer join member m on b.memberNum = m.memberNum
+        ORDER BY qnaBoardNum DESC
+    </select>
+
+    <select id="selectViewByNum" resultType="team.kyp.kypcoffee.domain.QnaBoard">
+        SELECT b.qnaBoardNum, b.memberNum, qnaBoardTitle, qnaBoardContent, qnaBoardDate, c.cmtDate, c.cmtContent
+        FROM qna_board b left outer join cmt c on b.qnaBoardNum = c.qnaBoardNum
+        WHERE b.memberNum=#{memberNum}
+    </select>
+
+
+    <select id="selectView" resultType="team.kyp.kypcoffee.domain.QnaBoard">
+        SELECT qnaBoardNum, b.memberNum, m.memberName, qnaBoardTitle, qnaBoardDate, qnaBoardContent
+        FROM qna_board b left outer join member m on b.memberNum = m.memberNum
+        WHERE qnaBoardNum=#{qnaBoardNum}
+    </select>
+
+
+
+    <select id="selectById" parameterType="String">
+        <include refid="selectAll" />
+        WHERE memberId=#{memberId}
+    </select>
+
+    <update id="updateBoard" parameterType="team.kyp.kypcoffee.domain.QnaBoard">
+        UPDATE qna_board
+        SET qnaBoardTitle=#{qnaBoardTitle}, qnaBoardContent=#{qnaBoardContent}
+        WHERE qnaBoardNum=#{qnaBoardNum}
+    </update>
+
+    <insert id="insertBoard" parameterType="team.kyp.kypcoffee.domain.QnaBoard">
+        INSERT INTO qna_board
+        VALUES(qna_board_seq.nextval,#{memberNum},#{qnaBoardTitle},#{qnaBoardContent},SYSDATE)
+    </insert>
+
+    <delete id="deleteBoard" parameterType="Integer">
+        DELETE qna_board WHERE qnaBoardNum=#{qnaBoardNum}
+    </delete>
+
+    <!--_________________________________________________________________-->
+
+    <select id="selectByNum" resultType="team.kyp.kypcoffee.domain.Comment">
+        SELECT * FROM cmt
+        WHERE qnaBoardNum=#{qnaBoardNum}
+    </select>
+
+    <insert id="insertCmt" parameterType="team.kyp.kypcoffee.domain.Comment">
+        INSERT INTO cmt
+        VALUES(comments_seq.nextval,#{cmtContent},SYSDATE,#{qnaBoardNum})
+    </insert>
+
+    <delete id="deleteCmt" parameterType="Integer">
+        DELETE cmt WHERE cmtNum=#{cmtNum}
+    </delete>
+
+    <!--_________________________________________________________________-->
+
+    <select id="pagingCount" resultType="int">
+	SELECT COUNT(*) FROM qna_board
+	</select>
+
+    <select id="pagingCountSearch" resultType="int">
+        SELECT COUNT(*) FROM qna_board b1 join member m on b1.memberNum=m.memberNum where REGEXP_LIKE(memberName||qnaBoardTitle||qnaBoardContent,#{keyword})
+    </select>
+
+    <select id="selectBoardPaging" resultType="team.kyp.kypcoffee.domain.QnaBoard">
+        SELECT RN ,qnaBoardNum, memberName, qnaBoardTitle,qnaBoardDate,qnaBoardContent,
+               (select count(*) from cmt c join qna_board b on b.qnaBoardNum = c.qnaBoardNum where b2.qnaBoardNum=b.qnaBoardNum) as count
+        FROM
+            (SELECT ROWNUM as RN ,qnaBoardNum, memberName, qnaBoardTitle,qnaBoardDate,qnaBoardContent
+            FROM (SELECT * FROM qna_board b1 join member m on b1.memberNum=m.memberNum
+            ORDER BY qnaBoardNum DESC)) b2
+        WHERE RN BETWEEN (#{section}-1)*100+(#{pageNum}-1)*10+1 AND (#{section}-1)*100+(#{pageNum})*10
+    </select>
+
+    <select id="selectSearchPaging" resultType="team.kyp.kypcoffee.domain.QnaBoard">
+        SELECT RN ,qnaBoardNum, memberName, qnaBoardTitle,qnaBoardDate,qnaBoardContent,
+               (select count(*) from cmt c join qna_board b on b.qnaBoardNum = c.qnaBoardNum where b2.qnaBoardNum=b.qnaBoardNum) as count
+        FROM
+            (SELECT ROWNUM as RN ,qnaBoardNum, memberName, qnaBoardTitle,qnaBoardDate,qnaBoardContent
+            FROM (SELECT * FROM qna_board b1 join member m on b1.memberNum=m.memberNum
+            ORDER BY qnaBoardNum DESC) where REGEXP_LIKE(memberName||qnaBoardTitle||qnaBoardContent,#{keyword}) )b2
+        WHERE RN BETWEEN (#{section}-1)*100+(#{pageNum}-1)*10+1 AND (#{section}-1)*100+(#{pageNum})*10
+    </select>
+</mapper>

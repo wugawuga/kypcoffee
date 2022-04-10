@@ -1,0 +1,125 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>관리자 - 상품관리 리스트</title>
+
+<style>
+    a {
+        text-decoration: none;
+        color: #5C3D2E;
+    }
+
+    a:hover {
+        color: #B85C38;
+        text-decoration: none;
+    }
+</style>
+</head>
+
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: admin-header"></div>
+    <section class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Product Manage</h2>
+                <ol>
+                    <li><a href="index.html">Admin</a></li>
+                    <li>상품관리</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+
+    <section class="inner-page">
+        <div class="container">
+            <h4>상품관리</h4><br>
+            <div class="row justify-content-center">
+                <div class="row justify-content-left">
+                    <div class="col-md-3 col-sm-3 col-xs-12 image-main-section" th:each="list :${productList}">
+                        <div class="row img-part">
+                            <div class="col-md-12 col-sm-12 colxs-12 img-section">
+                                <a th:href="@{/admin/productManage/detail/{productCode}(productCode=${list.productCode})}">
+                                    <img th:src="|/productImg/${list.imgName}|" style="width: 250px; height:250px;">
+                                </a>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12 image-title" style="text-align: left">
+                                <h5>[[${list.productName}]]</h5>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12 image-description" style="text-align: left">
+                                <p>가격 : [[${list.productPrice}]]<br>
+                                    타입 : [[${list.productType}]]<br>
+                                    코드 : [[${list.productCode}]]
+                                </p>
+                            </div>
+                        </div><br>
+                    </div>
+                </div>
+            </div><br><br>
+
+            <div style="text-align: center">
+                <th:block th:switch="${totalCntJudge}">
+                    <th:block th:case="81">
+                        <th:block th:if="${(section)*80<totalCnt}">
+                            <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
+                                <th:block th:if="${section >1 && page==1}">
+                                    <a th:href="@{/admin/productManage(section=${section}-1, pageNum=10)}"> << </a>
+                                </th:block>
+                                <a th:href="@{/admin/productManage(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                <th:block th:if="${page==10}">
+                                    <a th:href="@{/admin/productManage(section=${section+1}, pageNum=1)}"> >> </a>
+                                </th:block>
+                            </th:block>
+                        </th:block>
+
+                        <th:block th:if="${(section)*80>totalCnt}">
+                            <th:block th:each="page : ${#numbers.sequence(1, (((totalCnt+7)-((section)-1)*100)/8) ,1)}">
+                                <th:block th:if="${section >1 && page==1}">
+                                    <a th:href="@{/admin/productManage(section=${(section)-1}, pageNum=10)}"> << </a>
+                                </th:block>
+                                <a th:href="@{/admin/productManage(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                            </th:block>
+                        </th:block>
+
+                        <th:block th:if="${(section)*80==totalCnt}">
+                            <th:block th:each="page : ${#numbers.sequence(1, 10 ,1)}">
+                                <th:block th:if="${section >1 && page==1}">
+                                    <a th:href="@{/admin/productManage(section=${(section)-1}, pageNum=10)}"> << </a>
+                                </th:block>
+                                <a th:href="@{/admin/productManage(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                            </th:block>
+                        </th:block>
+
+                    </th:block>
+                    <th:block th:case="80">
+                        <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
+                            <a th:href="@{/admin/productManage(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
+                        </th:block>
+                    </th:block>
+                    <th:block th:case="79">
+                        <th:block th:each="page : ${#numbers.sequence(1,((totalCnt+7)/8),1)}">
+                            <a th:href="@{/admin/productManage(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
+                        </th:block>
+                    </th:block>
+                </th:block>
+            </div><br>
+
+            <div style="text-align: right">
+            <input type="button" th:value="상품등록" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;" th:onclick="|location.href='@{/admin/adminProductRegi}'|">
+            </div>
+
+        </div>
+    </section>
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

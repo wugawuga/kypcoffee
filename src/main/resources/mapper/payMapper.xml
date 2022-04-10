@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.PayMapper">
+
+    <insert id="insertPay" parameterType="team.kyp.kypcoffee.domain.Payment">
+        INSERT INTO payment
+        VALUES(payCode_seq.nextval, payNum_seq.nextval, #{productCode}, #{cartQuantity}, #{price},
+               #{imp_uid}, '결제완료', #{payDate}, #{memberNum}, #{use_mileage}, #{save_mileage})
+    </insert>
+
+    <insert id="insertPayMoreThan" parameterType="team.kyp.kypcoffee.domain.Payment">
+        INSERT INTO payment
+        VALUES(payCode_seq.nextval, payNum_seq.currval, #{productCode}, #{cartQuantity}, #{price},
+               #{imp_uid}, '결제완료', #{payDate}, #{memberNum}, #{use_mileage}, #{save_mileage})
+    </insert>
+<!--
+
+    <select id="selectPaymentByMemberNum" parameterType="int" resultType="team.kyp.kypcoffee.domain.Payment">
+        select p.*, pin.PRODUCTNAME from payment p LEFT OUTER JOIN PRODUCT_INFO pin ON p.productcode = pin.PRODUCTCODE WHERE MEMBERNUM = #{memberNum} order by paynumber desc
+    </select>
+-->
+    <select id="selectPaymentByMemberNum" parameterType="int" resultType="team.kyp.kypcoffee.domain.Payment">
+        SELECT GROUPNUMBER,
+               PAYCODE,
+               paynumber,
+               productCode,
+               cartQuantity,
+               price,
+               paystatus,
+               imp_uid,
+               paydate,
+               memberNum,
+               productName
+        FROM (select row_number() over(PARTITION by paynumber order by paynumber desc) groupNumber,
+                      p.*,
+                     pin.PRODUCTNAME
+              from payment p LEFT OUTER JOIN PRODUCT_INFO pin ON p.productcode = pin.PRODUCTCODE
+              WHERE MEMBERNUM = #{memberNum}
+              order by paynumber desc)
+    </select>
+
+    <select id="selectPayCount" parameterType="int" resultType="team.kyp.kypcoffee.domain.PayInfoCount">
+        select payNumber, count(*) AS count, memberNum from payment group by payNumber, memberNum having count(*) > 0 AND memberNum = #{memberNum} ORDER BY payNumber desc
+    </select>
+
+    <update id="payRefund" parameterType="String">
+        update payment set payStatus = '환불 대기 중' where imp_uid = #{imp_uid}
+    </update>
+
+    <update id="useMileage" parameterType="int">
+        update member set memberMileage = (memberMileage - #{use_pnt}) where memberNum = #{memberNum}
+    </update>
+
+    <update id="saveMileage" parameterType="int">
+        update member set memberMileage = (memberMileage + #{savePnt}) where memberNum = #{memberNum}
+    </update>
+
+    <update id="minusStock" parameterType="team.kyp.kypcoffee.domain.Cart">
+        update product_info set productQuantity = (productQuantity - #{cartQuantity}) where productCode = #{productCode}
+    </update>
+
+</mapper>

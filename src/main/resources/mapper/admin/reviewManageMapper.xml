@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.admin.ReviewManageMapper">
+
+    <select id="reviewList" parameterType="team.kyp.kypcoffee.domain.Paging" resultType="team.kyp.kypcoffee.domain.admin.Review">
+        SELECT *
+        FROM (SELECT ROWNUM AS RN, reviewNum, userName, reviewContent, imgSrc, fileName
+              FROM (SELECT * FROM REVIEW ORDER BY reviewNum ASC))
+        WHERE RN BETWEEN (#{section}-1)*80 + (#{pageNum}-1)*8 +1 and (#{section}-1)*80 + (#{pageNum}) * 8
+    </select>
+
+    <select id="selectAllCnt" resultType="int">
+        SELECT COUNT(*) FROM REVIEW
+    </select>
+
+    <insert id="reviewRegi" parameterType="team.kyp.kypcoffee.domain.admin.ReviewRegi">
+        INSERT INTO REVIEW VALUES (REVIEW_SEQ.nextval, #{userName}, #{reviewContent}, #{imgSrc}, #{fileName})
+    </insert>
+
+    <select id="selectReviewByNum" parameterType="int" resultType="team.kyp.kypcoffee.domain.admin.Review">
+        SELECT * FROM REVIEW
+        WHERE REVIEWNUM = #{reviewNum}
+    </select>
+
+    <delete id="deleteByNum" parameterType="int">
+        DELETE FROM REVIEW
+        WHERE REVIEWNUM = #{reviewNum}
+    </delete>
+
+    <delete id="deleteAll">
+        DELETE FROM REVIEW
+    </delete>
+
+</mapper>

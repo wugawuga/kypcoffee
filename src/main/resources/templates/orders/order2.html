@@ -1,0 +1,542 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>상품 결제</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="../img/favicon.png" rel="icon">
+    <link href="../img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+    <!-- jQuery -->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+
+    <!-- iamport.payment.js -->
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+    <script th:inline="javascript">
+        function execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+
+                    var addr = '';
+                    var extraAddr = '';
+
+                    if (data.userSelectedType === 'R') {
+                        addr = data.roadAddress;
+                    } else {
+                        addr = data.jibunAddress;
+                    }
+
+                    if(data.userSelectedType === 'R'){
+                        if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                            extraAddr += data.bname;
+                        }
+                        if(data.buildingName !== '' && data.apartment === 'Y'){
+                            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                        }
+                        if(extraAddr !== ''){
+                            extraAddr = ' (' + extraAddr + ')';
+                        }
+                        document.getElementById("extraAddress").value = extraAddr;
+                    } else {
+                        document.getElementById("extraAddress").value = '';
+                    }
+
+                    document.getElementById('postcode').value = data.zonecode;
+                    document.getElementById("address").value = addr;
+
+                    document.getElementById("detailAddress").focus();
+                }
+            }).open();
+        }
+    </script>
+    <script>
+        IMP.init('imp58958557');
+
+        document.cookie = "safeCookie1=foo; SameSite=Lax";
+        document.cookie = "safeCookie2=foo";
+        document.cookie = "crossCookie=bar; SameSite=None; Secure";
+
+        function requestPayCard() {
+
+            if ([[${session.authInfo.type}]] == 2) {
+                IMP.request_pay({
+
+                    pg: 'inicis', // version 1.1.0부터 지원.
+                    pay_method: 'card',
+                    merchant_uid: 'merchant_' + new Date().getTime(),
+                    name: 'kypCoffee',
+                    amount: [[${totalPrice}]] * 0.9 - document.getElementById('use_pnt').value, //판매 가격
+                    buyer_email: '[[${member.memberEmail}]]',
+                    buyer_name: '[[${member.memberName}]]',
+                    buyer_tel: '[[${member.memberPhone}]]',
+                    buyer_addr: document.getElementById("address").value + ' ' + document.getElementById("detailAddress").value,
+                    buyer_postcode: document.getElementById("postcode").value
+                }, function (rsp) {
+
+                    var today = new Date();
+
+                    var year = today.getFullYear();
+                    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+                    var day = ('0' + today.getDate()).slice(-2);
+
+                    var hours = ('0' + today.getHours()).slice(-2);
+                    var minutes = ('0' + today.getMinutes()).slice(-2);
+                    var seconds = ('0' + today.getSeconds()).slice(-2);
+
+                    var dateString = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+
+
+                    if (rsp.success) {
+                        // 결제검증
+                        $.ajax({
+                            type: "POST",
+                            url: "/verifyPayChecks",
+                            data: {
+                                'imp_uid': rsp.imp_uid,
+                                'totalPrice': [[${totalPrice}]],
+                                'cartNum': [[${cartNum}]],
+                                'dateString': dateString
+                            }
+                        }).done(function (data) {
+
+                            if (data == 'true') {
+                                alert('결제되었어요!!');
+                                location.href = '/mypage';
+                            } else if (data == 'false') {
+                                alert('결제실패에요!!')
+                                location.href = '/cartList';
+                            }
+
+                        });
+                    } else {
+                        alert(rsp.error_msg);
+                    }
+
+                });
+            } else {
+                IMP.request_pay({
+
+                    pg: 'inicis', // version 1.1.0부터 지원.
+                    pay_method: 'card',
+                    merchant_uid: 'merchant_' + new Date().getTime(),
+                    name: 'kypCoffee',
+                    amount: [[${totalPrice}]] - document.getElementById('use_pnt').value, //판매 가격
+                    buyer_email: '[[${member.memberEmail}]]',
+                    buyer_name: '[[${member.memberName}]]',
+                    buyer_tel: '[[${member.memberPhone}]]',
+                    buyer_addr: document.getElementById("address").value + ' ' + document.getElementById("detailAddress").value,
+                    buyer_postcode: document.getElementById("postcode").value
+                }, function (rsp) {
+
+                    var today = new Date();
+
+                    var year = today.getFullYear();
+                    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+                    var day = ('0' + today.getDate()).slice(-2);
+
+                    var hours = ('0' + today.getHours()).slice(-2);
+                    var minutes = ('0' + today.getMinutes()).slice(-2);
+                    var seconds = ('0' + today.getSeconds()).slice(-2);
+
+                    var dateString = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+
+
+                    if (rsp.success) {
+                        // 결제검증
+                        $.ajax({
+                            type: "POST",
+                            url: "/verifyPayChecks",
+                            data: {
+                                'imp_uid': rsp.imp_uid,
+                                'totalPrice': [[${totalPrice}]],
+                                'cartNum': [[${cartNum}]],
+                                'dateString': dateString
+                            }
+                        }).done(function (data) {
+
+                            if (data == 'true') {
+                                alert('결제되었어요!!');
+                                location.href = '/mypage';
+                            } else if (data == 'false') {
+                                alert('결제실패에요!!')
+                                location.href = '/cartList';
+                            }
+
+                        });
+                    } else {
+                        alert(rsp.error_msg);
+                    }
+
+                });
+            }
+        }
+
+
+        function requestPayKakao() {
+
+            if ([[${session.authInfo.type}]] == 2) {
+                IMP.request_pay({
+
+                    pg: 'kakaopay', // version 1.1.0부터 지원.
+                    pay_method: 'card',
+                    merchant_uid: 'merchant_' + new Date().getTime(),
+                    name: 'kypCoffee',
+                    amount: [[${totalPrice}]] * 0.9 - document.getElementById('use_pnt').value, //판매 가격
+                    buyer_email: '[[${member.memberEmail}]]',
+                    buyer_name: '[[${member.memberName}]]',
+                    buyer_tel: '[[${member.memberPhone}]]',
+                    buyer_addr: document.getElementById("address").value + ' ' + document.getElementById("detailAddress").value,
+                    buyer_postcode: document.getElementById("postcode").value
+                }, function (rsp) {
+
+                    var today = new Date();
+
+                    var year = today.getFullYear();
+                    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+                    var day = ('0' + today.getDate()).slice(-2);
+
+                    var hours = ('0' + today.getHours()).slice(-2);
+                    var minutes = ('0' + today.getMinutes()).slice(-2);
+                    var seconds = ('0' + today.getSeconds()).slice(-2);
+
+                    var dateString = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+
+
+                    if (rsp.success) {
+                        // 결제검증
+                        $.ajax({
+                            type: "POST",
+                            url: "/verifyPayChecks",
+                            data: {
+                                'imp_uid': rsp.imp_uid,
+                                'totalPrice': [[${totalPrice}]],
+                                'cartNum': [[${cartNum}]],
+                                'dateString': dateString,
+                                'use_pnt': document.getElementById('use_pnt').value
+                            }
+                        }).done(function (data) {
+
+                            if (data == 'true') {
+                                alert('결제되었어요!!');
+                                location.href = '/mypage';
+                            } else if (data == 'false') {
+                                alert('결제실패에요!!')
+                                location.href = '/cartList';
+                            }
+
+                        });
+                    } else {
+                        alert(rsp.error_msg);
+                    }
+
+                });
+            } else {
+                IMP.request_pay({
+
+                    pg : 'kakaopay', // version 1.1.0부터 지원.
+                    pay_method : 'card',
+                    merchant_uid : 'merchant_' + new Date().getTime(),
+                    name : 'kypCoffee',
+                    amount : [[${totalPrice}]] - document.getElementById('use_pnt').value, //판매 가격
+                    buyer_email : '[[${member.memberEmail}]]',
+                    buyer_name : '[[${member.memberName}]]',
+                    buyer_tel : '[[${member.memberPhone}]]',
+                    buyer_addr : document.getElementById("address").value + ' ' + document.getElementById("detailAddress").value,
+                    buyer_postcode : document.getElementById("postcode").value
+                },function(rsp) {
+
+                    var today = new Date();
+
+                    var year = today.getFullYear();
+                    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+                    var day = ('0' + today.getDate()).slice(-2);
+
+                    var hours = ('0' + today.getHours()).slice(-2);
+                    var minutes = ('0' + today.getMinutes()).slice(-2);
+                    var seconds = ('0' + today.getSeconds()).slice(-2);
+
+                    var dateString = year + '-' + month  + '-' + day + ' ' + hours + ':' + minutes  + ':' + seconds;
+
+
+                    if (rsp.success) {
+                        // 결제검증
+                        $.ajax({
+                            type: "POST",
+                            url: "/verifyPayChecks",
+                            data: {
+                                'imp_uid': rsp.imp_uid,
+                                'totalPrice': [[${totalPrice}]],
+                                'cartNum': [[${cartNum}]],
+                                'dateString': dateString,
+                                'use_pnt': document.getElementById('use_pnt').value,
+                                'save_pnt': document.getElementById('result_mileage').innerHTML
+                            }
+                        }).done(function (data) {
+
+                            if (data == 'true') {
+                                alert('결제되었어요!!');
+                                location.href = '/mypage';
+                            } else if (data == 'false') {
+                                alert('결제실패에요!!')
+                                location.href = '/cartList';
+                            }
+
+                        });
+                    } else {
+                        alert(rsp.error_msg);
+                    }
+
+                });
+            }
+        }
+
+        function chkPoint(amt,pnt,min,unit) {
+
+            var v_point = 0; //사용할 포인트 (input 입력값)
+            if ([[${session.authInfo.type}]] == 2) {
+                if (document.getElementById("chk_use").checked) {
+                    if (pnt < min)  //최소 사용 단위보다 작을 때
+                    {
+                        v_point = 0;
+                    } else {
+                        v_point = pnt - pnt % unit; //사용할 포인트 = 전체 마일리지 중 최소단위 이하 마일리지를 뺀 포인트
+                    }
+
+                    if (pnt > amt) { //결제금액보다 포인트가 더 클 때
+                        v_point = parseInt((amt * 0.9) / unit) * unit; //사용할 포인트는 결제금액과 동일하게 설정
+                    }
+
+                }
+                document.getElementById("use_pnt").value = v_point-100; //input 값 설정
+
+                changePoint(amt, pnt, min, unit);
+            } else {
+                if (document.getElementById("chk_use").checked)
+                {
+                    if (pnt < min)  //최소 사용 단위보다 작을 때
+                    {
+                        v_point = 0;
+                    }else {
+                        v_point = pnt - pnt%unit; //사용할 포인트 = 전체 마일리지 중 최소단위 이하 마일리지를 뺀 포인트
+                    }
+
+                    if(pnt > amt ){ //결제금액보다 포인트가 더 클 때
+                        v_point = parseInt(amt/unit)*unit; //사용할 포인트는 결제금액과 동일하게 설정
+                    }
+
+                }
+                document.getElementById("use_pnt").value = v_point-100; //input 값 설정
+
+                changePoint(amt,pnt,min,unit);
+            }
+
+        }
+
+        function changePoint(amt,pnt,min,unit){
+
+            var v_point = parseInt(document.getElementById("use_pnt").value); //사용할 포인트 (input 입력값)
+            if ([[${session.authInfo.type}]] == 2) {
+                if (v_point > pnt) //입력값이 사용가능 포인트보다 클때
+                {
+                    v_point = pnt;
+                    document.getElementById("use_pnt").value = v_point; //input 값 재설정
+                }
+
+                if (v_point > amt) { //결제금액보다 포인트가 더 클 때
+                    v_point = parseInt((amt*0.9) / unit) * unit; //사용할 포인트는 결제금액과 동일하게 설정
+                    document.getElementById("use_pnt").value = Math.ceil(v_point); //input 값 재설정
+                }
+
+                if (v_point < min)  //최소 사용 단위보다 작을 때
+                {
+                    v_point = 0;
+                    document.getElementById("use_pnt").value = v_point; //input 값 재설정
+                } else {
+                    v_point = v_point - v_point % unit; //사용할 포인트 = 사용할 마일리지 중 최소단위 이하 마일리지를 뺀 포인트
+                }
+
+                var v_left = document.getElementsByName("left_pnt"); //사용가능 마일리지, 남은 포인트 값 설정
+                for (var i = 0; i < v_left.length; i++) {
+
+                    v_left[i].innerHTML = pnt - v_point; //= 전체 포인트 중에 사용할 포인트빼고 남은 포인트
+
+                }
+                document.getElementById("result_pnt").innerHTML = (amt*0.9) - v_point; //최종 결제금액 = 결제금액 - 사용할 포인트
+                document.getElementById("result_mileage").innerHTML = Math.ceil(((amt*0.9) - v_point)*0.05);
+            } else {
+                if (v_point > pnt) //입력값이 사용가능 포인트보다 클때
+                {
+                    v_point = pnt;
+                    document.getElementById("use_pnt").value = v_point; //input 값 재설정
+                }
+
+                if(v_point > amt ){ //결제금액보다 포인트가 더 클 때
+                    v_point = parseInt(amt/unit)*unit; //사용할 포인트는 결제금액과 동일하게 설정
+                    document.getElementById("use_pnt").value = Math.ceil(v_point); //input 값 재설정
+                }
+
+                if (v_point < min)  //최소 사용 단위보다 작을 때
+                {
+                    v_point = 0;
+                    document.getElementById("use_pnt").value = v_point; //input 값 재설정
+                }else {
+                    v_point = v_point - v_point%unit; //사용할 포인트 = 사용할 마일리지 중 최소단위 이하 마일리지를 뺀 포인트
+                }
+
+                var v_left = document.getElementsByName("left_pnt"); //사용가능 마일리지, 남은 포인트 값 설정
+                for (var i = 0; i < v_left.length; i++) {
+
+                    v_left[i].innerHTML = pnt - v_point; //= 전체 포인트 중에 사용할 포인트빼고 남은 포인트
+
+                }
+                document.getElementById("result_pnt").innerHTML = amt - v_point; //최종 결제금액 = 결제금액 - 사용할 포인트
+                document.getElementById("result_mileage").innerHTML = Math.ceil((amt - v_point)*0.03);
+            }
+
+        }
+    </script>
+
+    <style>
+        .form1{
+            border:solid 1px lightgray;
+            width: 150px;
+            border-radius: 3px;
+        }
+    </style>
+
+</head>
+
+<body>
+<div th:replace="headerFooter.html :: top-bar"></div>
+<div th:replace="headerFooter.html :: main-header"></div>
+
+    <section class="breadcrumbs">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Payment</h2>
+                <ol>
+                    <li><a href="/">메인으로</a></li>
+                    <li>상품결제</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+            <br><br><br>
+
+<div class="cotainer">
+    <div class="row justify-content-center">
+        <div class="col-md-6 table-responsive">
+            <h4>상품정보</h4><br>
+            <table class="table text-center" >
+                    <tr>
+                        <td style="width: 60%">상품이름</td>
+                        <td style="width: 15%">수량</td>
+                        <td style="width: 25%">가격</td>
+                    </tr>
+
+                <tbody>
+                <tr th:each="p :${pInfos}">
+                    <td th:text="${p.productName}"></td>
+                    <td th:text="${p.cartQuantity}"></td>
+                    <td th:text="${p.cartQuantity*p.productPrice}+'원'"></td>
+                    <input type="hidden" id="totalPrice" th:value="${totalPrice}">
+                </tr>
+                </tbody>
+
+                <tr>
+                    <th>총 결제금액</th>
+                    <td></td>
+                    <th:block th:if="${session.authInfo.type == 2}">
+                        <td>
+                            <del><a th:text="${#numbers.formatInteger(totalPrice,3,'COMMA')}+' 원'"></a> </del>
+                            / <a th:text="${#numbers.formatInteger(totalPrice*0.9,3,'COMMA')}+' 원'"></a>
+                        </td>
+                    </th:block>
+                    <th:block th:if="${session.authInfo.type == 1}">
+                        <td><span class="bold txt_blue" th:text="${#numbers.formatInteger(totalPrice,3,'COMMA')}+'원'"></span></td>
+                    </th:block>
+                </tr>
+            </table>
+
+            <br><hr><br>
+
+                <h4>주문자/배송지 정보</h4><br>
+                <table class="table text-center" >
+                    <tr>
+                        <td>받으시는분의 주소</td>
+                        <td style="text-align: left"><input type="text" id="address" placeholder="주소" th:value="${member.memberAddress}" class="form-control form-control-sm" style="margin: 6px;">
+                            <input type="text" id="detailAddress" placeholder="상세주소" class="form-control form-control-sm" style="margin: 6px;">
+                            <input type="text" id="extraAddress" placeholder="참고항목" class="form-control form-control-sm" style="margin: 6px;"></td>
+                    </tr>
+
+                    <tr>
+                        <td>우편번호</td>
+                        <td style="text-align: left"><input type="text" id="postcode" class="form1">&nbsp;<input type="button" onclick="execDaumPostcode()" value="우편번호 찾기" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;"><br></td>
+                    </tr>
+
+                    <tr>
+                        <td rowspan="3">마일리지</td>
+                        <td style="text-align: left">사용가능 마일리지 : <span name="left_pnt" th:text="${member.memberMileage}"></span>p&nbsp;&nbsp;/&nbsp;<input type="checkbox" id="chk_use" th:onclick="|chkPoint(${totalPrice},${member.memberMileage},${min},100)|">&nbsp;최대 사용</span></td>
+                    </tr>
+
+                    <tr>
+                       <td style="text-align: left"><input type="number" name="use_pnt" id="use_pnt" class="form1" th:min="${min}" value="0" th:max="${member.memberMileage}" step="100" th:onchange="|changePoint(${totalPrice},${member.memberMileage},${min},100)|">&nbsp;p<br>
+                                <small style="color: #523e02">* 마일리지는 최소 1000p부터 100p 단위로 사용 가능합니다.</small></td>
+                    </tr>
+
+                    <tr>
+                          <td style="text-align: left">
+                            <span> 남은 마일리지 : </span><span name="left_pnt" id="left_pnt" th:text="${member.memberMileage}"></span>p<br>
+                            <th:block th:if="${session.authInfo.type == 2}">
+                                <span> 적립 마일리지 : </span><span id="result_mileage" th:text="${#numbers.formatInteger(totalPrice*0.05,2)}"></span>p
+                            </th:block>
+                            <th:block th:unless="${session.authInfo.type == 2}">
+                                <span> 적립 마일리지 : </span><span id="result_mileage" th:text="${#numbers.formatInteger(totalPrice*0.03,2)}"></span>p
+                            </th:block>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>최종 결제 금액</th>
+                        <th:block th:if="${session.authInfo.type == 2}">
+                            <td style="text-align: left">
+                                <del><a th:text="${#numbers.formatInteger(totalPrice,3,'COMMA')}+' 원'"></a> </del>
+                                / <a class="bold txt_red" id="result_pnt" th:text="${#numbers.formatInteger(totalPrice*0.9,3,'COMMA')}+' '"></a>원
+                            </td>
+                        </th:block>
+                        <th:block th:if="${session.authInfo.type == 1}">
+                            <td style="text-align: left"><span class="bold txt_red" id="result_pnt" th:text="${#numbers.formatInteger(totalPrice,3,'COMMA')}+'원'"></span></td>
+                        </th:block>
+                    </tr>
+            </table>
+
+                    <div style="text-align: right">
+                        <input type="button" onclick="requestPayCard()" value="일반 결제" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">&nbsp;&nbsp;
+                        <input type="button" onclick="requestPayKakao()" value="카카오 페이" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">&nbsp;&nbsp;
+                        <input type="button" onclick="location.href='/cartList';" value="결제 취소" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">
+                    </div>
+
+                        </div>
+                </div>
+    <br><br><br>
+</div>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<div th:replace="headerFooter.html :: footer"></div>
+<th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

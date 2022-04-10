@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.MemberMapper">
+
+    <select id="selectMemberInfoByNum" resultType="team.kyp.kypcoffee.domain.Member">
+        SELECT m.memberNum,memberPw,memberId,memberName,memberBday,memberAddress,memberTel,memberPhone,memberEmail,memberEmailYn,memberMileage,i.memberType
+        FROM member m left outer join member_info i on m.memberNum = i.memberNum
+        WHERE m.memberNum=#{memberNum}
+    </select>
+
+
+    <select id="selectByIdList" resultType="team.kyp.kypcoffee.domain.Member">
+        SELECT * FROM member WHERE memberId=#{memberId}
+    </select>
+
+    <select id="selectByIdAll" resultType="team.kyp.kypcoffee.domain.Member"><!--Auth 인증때 사용-->
+        SELECT * from member m join member_info m2 on m.memberNum=m2.memberNum WHERE memberId=#{memberId}
+    </select>
+
+    <select id="selectByMnum" resultType="team.kyp.kypcoffee.domain.Member"><!--Auth 인증때 사용-->
+        SELECT * FROM member WHERE memberNum=#{memberNum}
+    </select>
+
+    <select id="selectById" resultType="team.kyp.kypcoffee.domain.Member"><!--아이디 존재여부-->
+        SELECT nvl(MAX(memberId), '1') AS memberId FROM member WHERE memberId=#{memberId}
+    </select>
+
+    <select id="selectByEmail" resultType="team.kyp.kypcoffee.domain.Member"><!--이메일 존재여부-->
+        SELECT nvl(MAX(memberEmail), '1') AS memberEmail FROM member WHERE memberEmail=#{memberEmail}
+    </select>
+
+    <select id="selectCount" resultType="int"><!--전체회원수-->
+        SELECT count(*) FROM member
+    </select>
+
+    <update id="updatePw" parameterType="team.kyp.kypcoffee.domain.Member">
+        UPDATE member
+        SET  memberPw=#{memberPw}
+        WHERE memberId=#{memberId}
+    </update>
+
+    <update id="updateMember" parameterType="team.kyp.kypcoffee.domain.Member">
+        UPDATE member
+        SET  memberPw=#{memberPw}, memberName=#{memberName}, memberBday=#{memberBday}, memberAddress=#{memberAddress},
+             memberTel=#{memberTel},memberPhone=#{memberPhone},memberEmail=#{memberEmail}, memberEmailYn=#{memberEmailYn}
+        WHERE memberNum=#{memberNum}
+    </update>
+
+    <update id="updateMemberByAdmin" parameterType="team.kyp.kypcoffee.domain.Member"><!--관리자에 의한 회원정보 수정-->
+        UPDATE member
+        SET  memberPw=#{memberPw}, memberName=#{memberName}, memberBday=#{memberBday}, memberAddress=#{memberAddress},
+             memberTel=#{memberTel},memberPhone=#{memberPhone},memberEmail=#{memberEmail}, memberEmailYn=#{memberEmailYn},memberMileage=#{memberMileage}
+        WHERE memberNum=#{memberNum}
+    </update>
+
+    <update id="updateMemberByEmail" parameterType="team.kyp.kypcoffee.domain.Member">
+        UPDATE member
+        SET  memberName=#{memberName}, memberBday=#{memberBday}, memberAddress=#{memberAddress},
+             memberTel=#{memberTel},memberPhone=#{memberPhone},memberEmailYn=#{memberEmailYn}
+        WHERE memberEmail=#{memberEmail}
+    </update>
+
+    <insert id="insertMember" parameterType="team.kyp.kypcoffee.domain.Member">
+        INSERT INTO member
+        VALUES(member_seq.nextval,#{memberId},#{memberPw},#{memberName},#{memberBday},#{memberAddress},
+               #{memberTel},#{memberPhone},#{memberEmail},#{memberEmailYn},#{memberMileage})
+    </insert>
+
+    <insert id="insertMemberInfo" parameterType="team.kyp.kypcoffee.domain.Member">
+        INSERT INTO member_info
+        VALUES(member_seq.currval,#{memberType})
+    </insert>
+  
+    <delete id="deleteMember" parameterType="team.kyp.kypcoffee.domain.Member">
+        DELETE member WHERE memberNum=#{memberNum}
+    </delete>
+
+    <insert id="save"  useGeneratedKeys="true" keyProperty="id"><!--구글 테이블저장-->
+        INSERT INTO google VALUES(#{name}, #{email}, #{role},#{picture})
+    </insert>
+
+    <insert id="saveKakao" parameterType="team.kyp.kypcoffee.domain.User.Kakao"><!--카카오 테이블저장-->
+        INSERT INTO kakao VALUES(#{name}, #{email},#{picture})
+    </insert>
+
+    <select id="findByEmailGoogle" resultType="team.kyp.kypcoffee.domain.User.User">
+        SELECT * FROM google WHERE email = #{email}
+    </select>
+
+    <select id="findByEmailKakao" resultType="team.kyp.kypcoffee.domain.User.Kakao">
+        SELECT * FROM kakao WHERE email = #{email}
+    </select>
+
+    <select id="selectByEmailOnly" resultType="team.kyp.kypcoffee.domain.Member">
+        SELECT * from member m join member_info m2 on m.memberNum=m2.memberNum WHERE memberEmail = #{memberEmail}
+    </select>
+
+
+    <!--회원목록 페이징-->
+    <select id="pagingCount" resultType="int">
+        SELECT COUNT(*) FROM member
+    </select>
+
+    <select id="selectMemberListPaging" resultType="team.kyp.kypcoffee.domain.Member">
+        SELECT RN ,memberNum,memberPw,memberId,memberName,memberBday,memberAddress,memberTel,memberPhone,memberEmail,memberEmailYn,memberMileage
+        FROM
+            (SELECT ROWNUM as RN ,memberNum,memberPw,memberId,memberName,memberBday,memberAddress,memberTel,memberPhone,memberEmail,memberEmailYn,memberMileage
+            FROM (SELECT * FROM member
+            ORDER BY memberNum desc))
+        WHERE RN BETWEEN (#{section}-1)*100+(#{pageNum}-1)*10+1 AND (#{section}-1)*100+(#{pageNum})*10
+    </select>
+
+
+
+
+</mapper>

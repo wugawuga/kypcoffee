@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+    <meta charset="UTF-8">
+    <title>고윤박커피 / 회원정보조회</title>
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+</head>
+<body>
+<div th:replace="headerFooter.html :: top-bar"></div>
+<div th:replace="headerFooter.html :: main-header"></div>
+<section class="breadcrumbs">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Admin Page</h2>
+            <ol>
+                <li><a href="/">메인으로</a></li>
+                <li><a href="/memberManage">회원관리</a> / 회원정보조회</li>
+            </ol>
+        </div>
+
+    </div>
+</section>
+<br><br><br>
+<div class="cotainer">
+    <div class="row justify-content-center">
+        <div class="col-md-6 table-responsive">
+                <table class="table text-center">
+                        <tr>
+                            <td style="width:20%; text-align: left;">회원번호</td>
+                            <td style="text-align: left">[[${view.memberNum}]]</td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%; text-align: left;">아이디</td>
+                            <td style="text-align: left">[[${view.memberId}]]</td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%; text-align: left;">이메일</td>
+                            <td style="text-align: left">[[${view.memberEmail}]]</td>
+                        </tr>
+                    <tr>
+                        <td style="width:20%; text-align: left;">주소</td>
+                        <td style="text-align: left">[[${view.memberAddress}]]</td>
+                    </tr>
+                    <tr>
+                        <td style="width:20%; text-align: left;">일반 연락처</td>
+                        <td style="text-align: left">[[${view.memberTel}]]</td>
+                    </tr>
+                    <tr>
+                        <td style="width:20%; text-align: left;">핸드폰 번호</td>
+                        <td style="text-align: left">[[${view.memberPhone}]]</td>
+                    </tr>
+                    <tr>
+                        <td style="width:20%; text-align: left;">생년월일</td>
+                        <td style="text-align: left"> [[${#dates.format(view.memberBday,'yyyy-MM-dd')}]]</td>
+                    </tr>
+                    <tr>
+                        <td style="width:20%; text-align: left;">이메일 수신여부</td>
+                        <td style="text-align: left" th:if="${view.memberEmailYn=='1'}">수신</td>
+                        <td style="text-align: left" th:unless="${view.memberEmailYn=='0'}">수신거부</td>
+                    </tr>
+                    <tr>
+                        <td style="width:20%; text-align: left;">마일리지</td>
+                        <td style="text-align: left">[[${view.memberMileage}]]</td>
+                    </tr>
+                    <tr>
+                        <td style="width:20%; text-align: left;">회원타입</td>
+                        <th:block th:switch="${view.memberType}">
+                        <td style="text-align: left" th:case="1">일반회원</td>
+                        <td style="text-align: left" th:case="2">사업자회원</td>
+                        <td style="text-align: left" th:case="0">관리자</td></th:block>
+                    </tr>
+                </table><br>
+            <div style="text-align: right">
+                <input type="button" value="회원목록" onclick="location.href='/admin/memberManage'" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;">&nbsp;&nbsp;
+            </div>
+
+        </div>
+
+        </div>
+    </div>
+</div>
+<br><br><br>
+<div th:replace="headerFooter.html :: footer"></div>
+<th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+
+</html>

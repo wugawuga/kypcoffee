@@ -1,0 +1,83 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>원데이클래스 신청</title>
+</head>
+
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: main-header"></div>
+
+    <section class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Oneday Class Regi</h2>
+                <ol>
+                    <li>원데이클래스 등록</li>
+                    <li><a href="/">메인으로</a></li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <br><br><br>
+
+    <div class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-6 table-responsive">
+
+            <div th:if="${isAlreadyRegiMember == true}" style="text-align: center">
+                <h2>이미 등록하였습니다.</h2>
+                <input type="button" class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;" value="목록으로" th:onclick="|location.href='@{/class}'|">
+            </div>
+            <form th:unless="${isAlreadyRegiMember == true}" th:action="@{/class/regist}" th:object="${onedayClassRegiCommand}" method="post">
+                <input type="hidden" name="memberNum" th:value="${session.authInfo.no}">
+                <input type="hidden" name="classNum" th:value="${classNum}">
+
+                <div class="onedayList">
+                    <div class="onedayView">
+                        <div class="onedayTitle">
+                            [[${classNum}]]회차 Oneday Class
+                        </div>
+                        <hr style="color:#865439">
+                        <div class="onedayDate">
+                            신청자 : [[${session.authInfo.name}]]<br>
+                            연락처 : <input type="text" th:field="*{classPhone}"> <br>
+                            참가비 : 50,000원
+                        </div>
+                        <div class="onedayCapacity">
+                            <div class="capacity">
+                                참가인원 : <input type="number" style="width: 50px;" th:field="*{classApplicantsNum}"min="0">
+                                <span class="onedaySamll">* 신청자를 포함한 총 인원</span><br>
+                                <p th:text="${errors}"></p>
+                            </div>
+                            <a class="onedayRegiIcon">
+                                <input class="btn btn-primary btn-sm" style="background-color: #865439; border: 0;" type="submit" value="신청하기">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center">
+                    * 참가비는 계좌번호로 입금해주시거나 당일 오셔서 결제해주시면 됩니다.<br>
+                    <br>
+                    한국은행 12345-67-89101112
+               </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+    <br><br><br>
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

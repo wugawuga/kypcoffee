@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+  <meta charset="UTF-8">
+  <title>고윤박커피 / 접근 불가</title>
+  <!-- Fonts -->
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
+
+
+  <style>
+    body {
+      background: #2D2424;
+      background: linear-gradient(to right, #2D2424, #5c3d2e);
+    }
+
+
+  </style>
+  <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+</head>
+<body>
+<div th:replace="headerFooter.html :: top-bar"></div>
+<div th:replace="headerFooter.html :: main-header"></div>
+
+<br><br><br>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+      <div class="card border-0 shadow rounded-3 my-5">
+        <div class="card-body p-4 p-sm-5">
+          <h5 class="card-title text-center mb-5 fw-light fs-4">페이지 불러오기 실패</h5>
+
+          <div class="form-floating mb-3" style="text-align: center;">
+            <i class="far fa-question-circle fa-5x"></i><br><br>
+            잘못된 접근입니다.<br>다시 확인해 주세요.<br>
+            <br><br>
+            <input type="button" value="메인으로" onclick="location.href='/'" class="btn btn-primary" style="background-color: #865439; border: 0;">
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br><br><br>
+<div th:replace="headerFooter.html :: footer"></div>
+<th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+
+</html>

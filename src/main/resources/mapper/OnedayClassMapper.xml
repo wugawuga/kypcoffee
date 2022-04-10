@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.OnedayClassMapper">
+
+    <select id="selectOpenClass" resultType="team.kyp.kypcoffee.domain.OnedayClassNum">
+        SELECT CLASSNUM, CLASSDATE, CLASSCAPACITY, CLASSPLACE, CLASSEXPLANATION,
+               (SELECT SUM(CLASSAPPLICANTSNUM)
+                FROM ONEDAY_CLASS_INFO B
+                WHERE B.CLASSNUM = A.CLASSNUM
+                GROUP BY CLASSNUM) AS CLASSAPPLICANTSNUM
+        FROM ONEDAY_CLASS A
+        WHERE A.CLASSDATE >= SYSDATE
+        ORDER BY classDate DESC
+    </select>
+
+<!--    SELECT *
+    FROM (SELECT A.CLASSNUM, A.CLASSDATE, A.CLASSCAPACITY, NVL(SUM(B.CLASSAPPLICANTSNUM),0) AS CLASSAPPLICANTSNUM
+    FROM ONEDAY_CLASS A LEFT OUTER JOIN ONEDAY_CLASS_INFO B ON A.CLASSNUM = B.CLASSNUM
+    GROUP BY A.CLASSNUM, A.CLASSDATE, A.CLASSCAPACITY
+    HAVING A.CLASSDATE >= SYSDATE)-->
+
+    <insert id="regiClass" parameterType="team.kyp.kypcoffee.domain.OnedayClassRegiCommand">
+        INSERT INTO ONEDAY_CLASS_INFO VALUES(#{classNum}, #{classApplicantsNum}, #{memberNum} , #{classPhone})
+    </insert>
+
+    <select id="selectCntByClassNum" parameterType="int" resultType="team.kyp.kypcoffee.domain.OnedayClassNum">
+        SELECT *
+        FROM (SELECT A.CLASSNUM, A.CLASSDATE, A.CLASSCAPACITY, NVL(SUM(B.CLASSAPPLICANTSNUM),0) AS CLASSAPPLICANTSNUM
+              FROM ONEDAY_CLASS A LEFT OUTER JOIN ONEDAY_CLASS_INFO B ON A.CLASSNUM = B.CLASSNUM
+              GROUP BY A.CLASSNUM, A.CLASSDATE, A.CLASSCAPACITY
+              HAVING A.CLASSDATE >= SYSDATE)
+        WHERE CLASSNUM = #{classNum}
+    </select>
+
+    <select id="selectRegiMemberNum" parameterType="int" resultType="int">
+        SELECT MEMBERNUM FROM ONEDAY_CLASS_INFO
+        WHERE CLASSNUM = #{classNum}
+    </select>
+
+</mapper>

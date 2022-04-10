@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <meta charset="UTF-8">
+    <title>고윤박커피 / 로그인 성공</title>
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
+
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+          <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card border-0 shadow rounded-3 my-5">
+              <div class="card-body p-4 p-sm-5">
+                <h5 class="card-title text-center mb-5 fs-4 fw-light">구글 로그인 성공</h5>
+
+                  <div class="form-floating mb-3" style="text-align: center;">
+                   <br>
+                      <img style="border-radius: 70%" th:src="${session.authInfo.picture}"><br><br>
+                      <p th:if="${session.authInfo!=null}"><br>[[${session.authInfo.name}]] 님 환영합니다. 즐거운 쇼핑 되세요!<br><i class="fa fa-spinner fa-spin"></i>&nbsp;3초 후 메인으로 이동합니다.</p>
+                      <br><br>
+                  </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<th:block th:replace="headerFooter.html :: script"></th:block>
+<script>
+    window.onload = function(){
+        setTimeout(function(){
+            opener.parent.location="/";
+            window.close();
+        }, 2000);
+    };
+</script>
+</body>
+
+</html>

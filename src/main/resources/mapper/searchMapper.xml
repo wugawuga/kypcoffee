@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.SearchMapper">
+
+    <select id="productSearchList" parameterType="String" resultType="team.kyp.kypcoffee.domain.Product_info">
+        SELECT *
+        FROM (SELECT ROWNUM AS RN, PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, productimg, IMGNAME, CONTENTIMGNAME, PRODUCTTYPE
+              FROM (SELECT A.PRODUCTCODE, A.PRODUCTNAME, A.PRODUCTPRICE, a.productimg, A.IMGNAME, A.CONTENTIMGNAME, B.PRODUCTTYPE
+                    FROM PRODUCT_INFO A JOIN PRODUCT B ON (A.PRODUCTCODE = B.PRODUCTCODE)
+                    ORDER BY B.PRODUCTTYPE, A.PRODUCTCODE))
+        WHERE REGEXP_LIKE(PRODUCTNAME||PRODUCTPRICE, #{keyWord})
+    </select>
+
+    <select id="noticeSearchList" parameterType="String" resultType="team.kyp.kypcoffee.domain.Notice">
+        SELECT *
+        FROM (SELECT ROWNUM AS RN, noticeNum, noticeTitle, noticeContent, noticeCount, noticeDate
+              FROM (SELECT * FROM NOTICE_BOARD ORDER BY noticeNum DESC))
+        WHERE REGEXP_LIKE(NOTICETITLE||NOTICECONTENT, #{keyWord})
+    </select>
+
+    <select id="qnaSearchList" parameterType="String" resultType="team.kyp.kypcoffee.domain.QnaBoard">
+        SELECT RN ,qnaBoardNum, memberName, qnaBoardTitle,qnaBoardDate,qnaBoardContent,
+               (select count(*) from cmt c join qna_board b on b.qnaBoardNum = c.qnaBoardNum where b2.qnaBoardNum=b.qnaBoardNum) as count
+        FROM
+            (SELECT ROWNUM as RN ,qnaBoardNum, memberName, qnaBoardTitle,qnaBoardDate,qnaBoardContent
+            FROM (SELECT * FROM qna_board b1 join member m on b1.memberNum=m.memberNum
+            ORDER BY qnaBoardNum DESC)) b2
+        WHERE REGEXP_LIKE(QNABOARDTITLE||QNABOARDCONTENT, #{keyWord})
+    </select>
+
+    <select id="reviewSearchList" parameterType="String" resultType="team.kyp.kypcoffee.domain.admin.Review">
+        SELECT *
+        FROM (SELECT ROWNUM AS RN, reviewNum, userName, reviewContent, imgSrc, fileName
+              FROM (SELECT * FROM REVIEW ORDER BY reviewNum ASC))
+        WHERE REGEXP_LIKE(REVIEWCONTENT||USERNAME, #{keyWord})
+    </select>
+
+    <select id="onedayclassSearchList" parameterType="String" resultType="team.kyp.kypcoffee.domain.OnedayClassNum">
+        SELECT CLASSNUM, CLASSDATE, CLASSCAPACITY, CLASSPLACE, CLASSEXPLANATION,
+               (SELECT SUM(CLASSAPPLICANTSNUM)
+                FROM ONEDAY_CLASS_INFO B
+                WHERE B.CLASSNUM = A.CLASSNUM
+                GROUP BY CLASSNUM) AS CLASSAPPLICANTSNUM
+        FROM ONEDAY_CLASS A
+        WHERE A.CLASSDATE >= SYSDATE
+          AND REGEXP_LIKE(CLASSPLACE||CLASSEXPLANATION, #{keyWord})
+        ORDER BY classDate DESC
+    </select>
+
+</mapper>

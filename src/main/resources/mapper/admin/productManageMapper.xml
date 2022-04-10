@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.admin.ProductManageMapper">
+
+    <select id="selectProductList" parameterType="team.kyp.kypcoffee.domain.Paging" resultType="team.kyp.kypcoffee.domain.admin.ProductManage">
+        SELECT *
+        FROM (SELECT ROWNUM AS RN, PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, IMGNAME, CONTENTIMGNAME, PRODUCTTYPE
+              FROM (SELECT A.PRODUCTCODE, A.PRODUCTNAME, A.PRODUCTPRICE, A.IMGNAME, A.CONTENTIMGNAME, B.PRODUCTTYPE
+                    FROM PRODUCT_INFO A JOIN PRODUCT B ON (A.PRODUCTCODE = B.PRODUCTCODE)
+                    ORDER BY A.PRODUCTCODE DESC))
+        WHERE RN BETWEEN (#{section}-1)*80 + (#{pageNum}-1)*8 +1 and (#{section}-1)*80 + (#{pageNum}) * 8
+    </select>
+
+    <select id="selectAllCnt" resultType="int">
+        SELECT COUNT(*) FROM PRODUCT_INFO A JOIN PRODUCT B ON (A.PRODUCTCODE = B.PRODUCTCODE)
+    </select>
+
+    <select id="selectProductDetail" resultType="team.kyp.kypcoffee.domain.admin.ProductManage" parameterType="int">
+        SELECT A.PRODUCTCODE, A.PRODUCTNAME, A.PRODUCTPRICE, A.IMGNAME, A.CONTENTIMGNAME, B.PRODUCTTYPE
+        FROM PRODUCT_INFO A JOIN PRODUCT B ON (A.PRODUCTCODE = B.PRODUCTCODE)
+        WHERE A.PRODUCTCODE = #{productCode}
+    </select>
+
+    <delete id="delProductByCode" parameterType="int">
+        DELETE FROM PRODUCT
+        WHERE PRODUCTCODE = #{productCode}
+    </delete>
+
+    <delete id="delProductInfoByCode" parameterType="int">
+        DELETE FROM PRODUCT_INFO
+        WHERE PRODUCTCODE = #{productCode}
+    </delete>
+
+    <update id="updateProduct" parameterType="int">
+        UPDATE PRODUCT
+        SET PRODUCTTYPE = #{productType}
+        WHERE PRODUCTCODE = #{productCode}
+    </update>
+
+    <update id="updateProductInfo" parameterType="team.kyp.kypcoffee.domain.admin.ProductManageUpdateCommand">
+        UPDATE PRODUCT_INFO
+        SET PRODUCTNAME = #{productName},
+        <if test='imgName != null'>
+            IMGNAME = #{imgName},
+        </if>
+        <if test='contentImgName != null'>
+            CONTENTIMGNAME = #{contentImgName},
+        </if>
+            PRODUCTPRICE = #{productPrice}
+        WHERE PRODUCTCODE = #{productCode}
+    </update>
+
+
+</mapper>

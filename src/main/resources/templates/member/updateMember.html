@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+    <meta charset="UTF-8">
+    <title>고윤박커피 / 회원정보수정</title>
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+</head>
+<body>
+<div th:replace="headerFooter.html :: top-bar"></div>
+<div th:replace="headerFooter.html :: main-header"></div>
+
+<section class="breadcrumbs">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Update Info</h2>
+            <ol>
+                <li><a th:href="@{/}">메인으로</a></li>
+                <li><a th:href="@{/updateInfo}">회원정보수정</a></li>
+                <li><a th:href="@{/cartList}"><i class="fas fa-shopping-cart"></i></a></li>
+            </ol>
+        </div>
+
+    </div>
+</section>
+<br><br><br>
+
+    <div class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">회원정보 수정 (소셜로그인)</div>
+                    <div class="card-body">
+                        <form name="updateInfoMember" action="/updateInfoMember" commandName="updateForm" method="POST">
+                            <div class="form-group row">
+                                    <label for="email" class="col-md-4 col-form-label text-md-right">이메일</label>
+                                    <div class="col-md-6">
+                                        <input type="text" id="email" class="form-control" name="email" th:value="${member.memberEmail}" readonly><!--구글/카카오 로그인은 이메일수정안됨-->
+                                    </div>
+                                </div>
+                            <div class="form-group row">
+                                <label for="name" class="col-md-4 col-form-label text-md-right">성명</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="name" class="form-control" name="name" th:value="${member.memberName}">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="birth" class="col-md-4 col-form-label text-md-right">생년월일</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="birth" class="form-control" name="birth" th:value="${#dates.format(member.memberBday,'yyyy/MM/dd')}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="address" class="col-md-4 col-form-label text-md-right">주소</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="address" class="form-control" name="address" th:value="${member.memberAddress}">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="tel" class="col-md-4 col-form-label text-md-right">전화번호(일반)</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="tel" class="form-control" name="tel" th:value="${member.memberTel}">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="phone" class="col-md-4 col-form-label text-md-right">핸드폰 번호</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="phone" class="form-control" name="phone" th:value="${member.memberPhone}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label text-md-right">이메일 수신</label>
+                                <div class="col-md-4">
+                                    <input type="radio" name="emailyn" value="0" th:checked="${member.memberEmailYn==0}">&nbsp;수신거부&nbsp;&nbsp;
+                                    <input type="radio" checked name="emailyn" value="1" th:checked="${member.memberEmailYn==1}">&nbsp;수신
+
+                                    <input type="hidden" th:value="${member.memberNum}" name="no">
+                                    <input type="hidden" th:value="${member.memberPw}" name="pw">
+                                    <input type="hidden" value="1" name="type"><!--일반회원 membertype 1번전송-->
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="col-md-6 offset-md-4">
+                                    <button type="button" class="btn btn-primary" style="background-color: #865439; border: 0;" onclick="validform()">
+                                        정보수정
+                                    </button>
+                                    <button type="reset" class="btn btn-primary" style="background-color: #865439; border: 0;">
+                                        다시작성
+                                    </button>
+                                    <button type="button" class="btn btn-primary" style="background-color: #865439; border: 0;" onclick="location.href='../mypage'">
+                                        취소
+                                    </button>
+                                    <button type="button" class="btn btn-primary" style="background-color: #865439; border: 0;" onclick="location.href='../unregister'">
+                                        회원탈퇴
+                                    </button>
+                                </div>
+
+                            </div>
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+<br><br><br>
+<script>
+    function validform() {
+
+        var c = document.forms["updateInfoMember"]["name"].value;
+        var d = document.forms["updateInfoMember"]["address"].value;
+        var g = document.forms["updateInfoMember"]["emailyn"].value;
+        var h = document.forms["updateInfoMember"]["tel"].value;
+        var i = document.forms["updateInfoMember"]["phone"].value;
+        var j = document.forms["updateInfoMember"]["birth"].value;
+
+         if (c==null || c==""){
+            alert("이름이 입력되지 않았습니다.");
+            return false;
+        }else if (d==null || d=="")
+        {
+            alert("주소가 입력되지 않았습니다.");
+            return false;
+
+        }else if (g==null || g=="")
+        {
+            alert("이메일 수신여부를 체크하세요");
+            return false;
+        }else if (h==null || h=="")
+        {
+            alert("전화번호가 입력되지 않았습니다.");
+            return false;
+        }else if (i==null || i=="")
+        {
+            alert("핸드폰 번호가 입력되지 않았습니다.");
+            return false;
+        }else if (j==null || j=="")
+        {
+            alert("생년월일이 입력되지 않았습니다.");
+            return false;
+        }else{
+             updateInfoMember.submit();
+        }
+
+
+    }
+
+</script>
+
+</script>
+<div th:replace="headerFooter.html :: footer"></div>
+<th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

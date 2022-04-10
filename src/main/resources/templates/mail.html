@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <meta charset="UTF-8">
+    <title>고윤박커피 / 오시는길</title>
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+</head>
+<body>
+<div th:replace="headerFooter.html :: top-bar"></div>
+<div th:replace="headerFooter.html :: main-header"></div>
+
+<section class="breadcrumbs">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Map</h2>
+            <ol>
+                <li><a href="/">메인으로</a></li>
+                <li>오시는 길</li>
+            </ol>
+        </div>
+
+    </div>
+</section>
+<!-- ======= Contact Section ======= -->
+<section id="contact" class="contact">
+    <div class="container">
+
+        <div class="section-title" data-aos="zoom-in">
+            <h2>오프라인 매장 안내</h2>
+            <h3><span>찾아오시는 길</span>과 이메일 문의</h3>
+            <p>저희 고윤박커피는 온라인은 물론 오프라인 매장도 운영하고 있습니다. <br>빠른 상담을 위해서 아래 연락처와 이메일 문의를 참조해 주십시오.</p>
+        </div>
+
+        <div>
+            <iframe style="border:0; width: 100%; height: 270px;" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=센트럴타운로22번길&amp;t=&amp;z=15&amp;ie=UTF8&amp;iwloc=B&amp;output=embed" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="row mt-5">
+
+            <div class="col-lg-4" data-aos="fade-right">
+                <div class="info">
+                    <div class="address">
+                        <i class="bi bi-geo-alt"></i>
+                        <h4>위치:</h4>
+                        <p>광교 센트럴타운로 22번길, 수원시, 경기도</p>
+                    </div>
+
+                    <div class="email">
+                        <i class="bi bi-envelope"></i>
+                        <h4>이메일:</h4>
+                        <p>contact@koyunpark.com</p>
+                    </div>
+
+                    <div class="phone">
+                        <i class="bi bi-phone"></i>
+                        <h4>전화번호:</h4>
+                        <p>+31 000 0000</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-8 mt-5 mt-lg-0" data-aos="fade-left">
+
+                <form th:action="@{/mail}" method="post" role="form" class="php-email-form">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <input type="text" name="name" class="form-control" id="name" placeholder="이름" required>
+                        </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <textarea class="form-control" name="message" rows="5" placeholder="문의양식 : 연락처, 이메일주소 포함" required></textarea>
+                    </div>
+                    <div class="my-3">
+                        <div class="loading">Loading</div>
+                        <div class="error-message">오류발생</div>
+                        <div class="sent-message">메일이 성공적으로 발송되었습니다.</div>
+                    </div>
+                    <div class="text-center"><button type="submit">메일전송</button></div>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</section><!-- End Contact Section -->
+<div th:replace="headerFooter.html :: footer"></div>
+<th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

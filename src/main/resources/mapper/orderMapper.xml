@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.OrderMapper">
+
+    <select id="memberInfoByMemberNum" resultType="team.kyp.kypcoffee.domain.Member">
+        select * from member WHERE MEMBERNUM = #{memberNum}
+    </select>
+
+    <select id="productInfo" resultType="team.kyp.kypcoffee.domain.Product_info">
+        select p.*,c.* from cart c left outer join product_info p on c.productCode = p.productCode where c.cartNum in
+        <foreach collection="list" item="arr" open="(" close=")" separator=",">
+            #{arr}
+        </foreach>
+    </select>
+
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.admin.InventoryManageMapper">
+
+    <select id="selectInventoryList" parameterType="team.kyp.kypcoffee.domain.Paging" resultType="team.kyp.kypcoffee.domain.admin.InventoryManage">
+        SELECT *
+        FROM (SELECT ROWNUM AS RN, PRODUCTCODE, PRODUCTNAME, PRODUCTQUANTITY, IMGNAME, PRODUCTTYPE
+              FROM (SELECT A.PRODUCTCODE, A.PRODUCTNAME, A.PRODUCTQUANTITY, A.IMGNAME, B.PRODUCTTYPE
+                    FROM PRODUCT_INFO A JOIN PRODUCT B ON (A.PRODUCTCODE = B.PRODUCTCODE)
+                    ORDER BY B.PRODUCTTYPE, A.PRODUCTCODE))
+        WHERE RN BETWEEN (#{section}-1)*100 + (#{pageNum}-1)*10 +1 and (#{section}-1)*100 + (#{pageNum}) * 10
+    </select>
+
+    <select id="selectAllCnt" resultType="int">
+        SELECT COUNT(*) FROM PRODUCT_INFO A JOIN PRODUCT B ON (A.PRODUCTCODE = B.PRODUCTCODE)
+    </select>
+
+    <update id="updateProductQuantity" parameterType="team.kyp.kypcoffee.domain.admin.InventoryManageUpdate">
+        UPDATE PRODUCT_INFO
+        SET PRODUCTQUANTITY = #{productQuantity}
+        WHERE PRODUCTCODE = #{productCode}
+    </update>
+
+</mapper>

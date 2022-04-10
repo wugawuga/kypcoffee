@@ -1,0 +1,136 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>관리자 - 재고관리</title>
+</head>
+
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: admin-header"></div>
+    <section class="breadcrumbs">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Inventory Manage</h2>
+                <ol>
+                    <li><a href="index.html">Admin</a></li>
+                    <li>재고관리</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <br><br><br>
+
+    <div class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-6 table-responsive">
+                <h4>재고목록</h4><br>
+                <table class="table text-center" >
+                    <tr>
+                        <th style="width: 20%;">상품코드</th>
+                        <th style="width: 10%">종류</th>
+                        <th style="width: 35%">상품이름</th>
+                        <th style="width: 25%">이미지</th>
+                        <th style="width: 10%">수량</th>
+                    </tr>
+                    <tr th:each="list :${inventoryList}">
+                        <td th:text="${list.productCode}" style="width: 20%; padding-top: 50px;"></td>
+                        <td th:text="${list.productType}" style="width: 10%; padding-top: 50px;"></td>
+                        <td th:text="${list.productName}" style="width: 35%; padding-top: 50px;"></td>
+                        <td style="width: 25%;"><img style="width: 100px;" th:src="|/productImg/${list.imgName}|"></td>
+                        <td style="width: 10%;">
+                            <input type="number" th:id="|productQuantity${list.productCode}|" th:value="${list.productQuantity}" readonly style="width: 100px;"><br><br>
+                            <a href="#" style="display: none;" th:id="|check${list.productCode}|" th:onclick="|updateDo(${list.productCode})|"><i class="fa fa-check-square"></i></a>
+                            <a href="#" th:id="|update${list.productCode}|"th:onclick="|updateForm(${list.productCode}); return false;|"><i class="far fa-plus-square"></i></a>
+                        </td>
+                    </tr>
+                </table>
+
+                <div style="text-align: center">
+                    <th:block th:switch="${totalCntJudge}">
+                        <th:block th:case="101">
+                            <th:block th:if="${(section)*100<totalCnt}">
+                                <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
+                                <th:block th:if="${section >1 && page==1}">
+                                    <a th:href="@{/admin/inventoryManage(section=${section}-1, pageNum=10)}"> << </a>
+                                </th:block>
+                                <a th:href="@{/admin/inventoryManage(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                <th:block th:if="${page==10}">
+                                    <a th:href="@{/admin/inventoryManage(section=${section+1}, pageNum=1)}"> >> </a>
+                                </th:block>
+                            </th:block>
+                        </th:block>
+
+                        <th:block th:if="${(section)*100>totalCnt}">
+                            <th:block th:each="page : ${#numbers.sequence(1, (((totalCnt+9)-((section)-1)*100)/10) ,1)}">
+                                <th:block th:if="${section >1 && page==1}">
+                                    <a th:href="@{/admin/inventoryManage(section=${(section)-1}, pageNum=10)}"> << </a>
+                                </th:block>
+                                <a th:href="@{/admin/inventoryManage(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                            </th:block>
+                        </th:block>
+
+                        <th:block th:if="${(section)*100==totalCnt}">
+                            <th:block th:each="page : ${#numbers.sequence(1, 10 ,1)}">
+                                <th:block th:if="${section >1 && page==1}">
+                                    <a th:href="@{/admin/inventoryManage(section=${(section)-1}, pageNum=10)}"> << </a>
+                                </th:block>
+                                <a th:href="@{/admin/inventoryManage(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                            </th:block>
+                        </th:block>
+
+                        </th:block>
+                        <th:block th:case="100">
+                            <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
+                                <a th:href="@{/admin/inventoryManage(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
+                            </th:block>
+                        </th:block>
+                        <th:block th:case="99">
+                            <th:block th:each="page : ${#numbers.sequence(1,((totalCnt+9)/10),1)}">
+                                <a th:href="@{/admin/inventoryManage(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
+                            </th:block>
+                        </th:block>
+                    </th:block>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <br><br><br>
+
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+    <script>
+        function updateForm(code){
+            console.log(code);
+            let productQuantity = document.getElementById('productQuantity'+code);
+            productQuantity.readOnly = false;
+
+            let update = document.getElementById('update'+code);
+            update.style.display = "none";
+
+            let check = document.getElementById('check'+code);
+            check.style.display = "block";
+        }
+
+        function updateDo(code){
+            console.log("updateDO Code" +  code);
+
+            let productQuantity = document.getElementById('productQuantity'+code);
+            let quantity = productQuantity.value;
+
+            console.log("quantity : " + quantity);
+
+            location.href="/admin/inventoryManage/update/"+code+"/"+quantity
+        }
+    </script>
+</body>
+</html>

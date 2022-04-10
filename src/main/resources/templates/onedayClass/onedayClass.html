@@ -1,0 +1,67 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>원데이클래스</title>
+</head>
+
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: main-header"></div>
+
+    <section class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Oneday Class</h2>
+                <ol>
+                    <li>원데이클래스</li>
+                    <li><a href="/">메인으로</a></li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <br><br><br>
+
+    <div class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-6 table-responsive">
+
+                <div class="onedayList" th:each="list :${classList}">
+                    <div class="onedayView">
+                        <div class="onedayTitle">
+                            [[${list.classNum}]]회차 Oneday Class
+                        </div>
+                        <hr style="color:#865439">
+                        <div class="onedayDate">
+                            날짜 : [[${#dates.format(list.classDate,'yyyy-MM-dd')}]] <br>
+                            장소 : [[${list.classPlace}]]<br>
+                            신청인원 : [[${list.classApplicantsNum}]] / [[${list.classCapacity}]]
+                        </div>
+                        <div class="onedayCapacity">
+                            <div class="capacity">
+                                설명 : [[${list.classExplanation}]]
+                            </div>
+                            <a class="onedayRegiIcon"th:href="@{/class/regist/{classNum}(classNum=${list.classNum})}">
+                                신청&nbsp;<i class="fas fa-edit fa-1.5x"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <br><br><br>
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.kyp.kypcoffee.mapper.CartMapper">
+    <insert id="cartAdd" parameterType="team.kyp.kypcoffee.domain.CartCommand">
+        insert into cart values(cart_seq.nextval,#{memberNum},#{productCode},#{cartQuantity})
+    </insert>
+
+    <select id="findAll" resultType="team.kyp.kypcoffee.domain.Cart">
+        SELECT c.* ,pin.*, (pin.PRODUCTPRICE*c.CARTQUANTITY) AS totalPrice
+        FROM cart c LEFT OUTER JOIN PRODUCT_INFO pin ON c.PRODUCTCODE = pin.PRODUCTCODE WHERE c.MEMBERNUM = #{memberNum}
+    </select>
+
+    <delete id="delCart" parameterType="int">
+        delete from cart where cartNum = #{cartNum}
+    </delete>
+
+    <select id="cartsInfo" resultType="team.kyp.kypcoffee.domain.Cart">
+        select c.*, (pin.PRODUCTPRICE*c.CARTQUANTITY) AS totalPrice FROM cart c LEFT OUTER JOIN PRODUCT_INFO pin ON c.PRODUCTCODE = pin.PRODUCTCODE WHERE cartNum in
+        <foreach collection="list" item="arr" open="(" close=")" separator=",">
+            #{arr}
+        </foreach>
+    </select>
+</mapper>

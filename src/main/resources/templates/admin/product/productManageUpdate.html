@@ -1,0 +1,158 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <th:block th:replace="headerFooter.html :: configFragment"></th:block>
+
+    <title>상품관리 수정</title>
+</head>
+
+<body>
+    <div th:replace="headerFooter.html :: top-bar"></div>
+    <div th:replace="headerFooter.html :: admin-header"></div>
+    <section class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Product Manage Update</h2>
+                <ol>
+                    <li><a href="index.html">Admin</a></li>
+                    <li>상품관리 수정</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+
+    <section class="inner-page">
+        <div class="container">
+
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">상품정보 수정</div>
+                        <div class="card-body">
+                            <form name="updateInfo" th:action="@{/admin/productManage/update}" th:object="${productManageUpdateCommand}" method="POST" enctype="multipart/form-data">
+
+                                <input type="hidden" id="productCode" name="productCode" th:value="${detail.productCode}">
+                                <div class="form-group row">
+                                    <label for="productType" class="col-md-4 col-form-label text-md-right">상품타입</label>
+                                    <div class="col-md-6">
+                                        <select id="productType" name="productType" required >
+                                            <option th:selected="${detail.productType}=='0'" th:value="0">선택</option>
+                                            <option th:selected="${detail.productType}=='1'" th:value="1">원두</option>
+                                            <option th:selected="${detail.productType}=='2'" th:value="2">컵/텀블러</option>
+                                            <option th:selected="${detail.productType}=='3'" th:value="3">시럽</option>
+                                            <option th:selected="${detail.productType}=='4'" th:value="4">선물세트</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="productName" class="col-md-4 col-form-label text-md-right">상품이름</label>
+                                    <div class="col-md-6">
+                                        <input type="text" id="productName" class="form-control" name="productName" th:value="${detail.productName}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="productPrice" class="col-md-4 col-form-label text-md-right">상품가격</label>
+                                    <div class="col-md-6">
+                                        <input type="text" id="productPrice" class="form-control" name="productPrice" th:value="${detail.productPrice}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="productImg" class="col-md-4 col-form-label text-md-right">상품이미지</label>
+                                    <div class="col-md-6">
+                                        <input type="file" id="productImg" class="form-control" name="productImg" th:value="${detail.imgName}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="preview-image" class="col-md-4 col-form-label text-md-right">상품이미지 미리보기</label>
+                                    <div class="col-md-6">
+                                        <img style="width: 100px;" id="preview-image" src="https://dummyimage.com/100x100/ffffff/000000.png&text=preview+image">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="productContentImg" class="col-md-4 col-form-label text-md-right">내용이미지</label>
+                                    <div class="col-md-6">
+                                        <input type="file" id="productContentImg" class="form-control" name="productContentImg" th:value="${detail.contentImgName}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="preview-content-image" class="col-md-4 col-form-label text-md-right">내용이미지 미리보기</label>
+                                    <div class="col-md-6">
+                                        <img style="width: 100px;" id="preview-content-image" src="https://dummyimage.com/100x100/ffffff/000000.png&text=preview+image">
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="col-md-6 offset-md-4">
+                                        <input type="submit" class="btn btn-primary" style="background-color: #865439; border: 0;" value="수정">
+                                        <button type="reset" class="btn btn-primary" style="background-color: #865439; border: 0;">
+                                            다시작성
+                                        </button>
+                                        <button type="button" class="btn btn-primary" style="background-color: #865439; border: 0;" onclick="location.href='/admin/productManage'">
+                                            취소
+                                        </button>
+                                    </div>
+                                </div>
+
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <div th:replace="headerFooter.html :: footer"></div>
+    <th:block th:replace="headerFooter.html :: script"></th:block>
+
+    <script>
+        function readImage(input, flag) {
+            // 인풋 태그에 파일이 있는 경우
+            if(input.files[0]) {
+                // FileReader 인스턴스 생성
+                const reader = new FileReader()
+                // 이미지가 로드가 된 경우
+                reader.onload = e => {
+                    if(flag == 0){
+                        const previewImage = document.getElementById("preview-image")
+                        previewImage.src = e.target.result
+                    }
+                    else{
+                        const previewImage = document.getElementById("preview-content-image")
+                        previewImage.src = e.target.result
+                    }
+
+                }
+                // reader가 이미지 읽도록 하기
+                reader.readAsDataURL(input.files[0])
+            }
+        }
+
+        // input file에 change 이벤트 부여
+        const productImg = document.getElementById("productImg")
+        productImg.addEventListener("change", e => {
+            readImage(e.target, 0)
+        })
+
+        const productContentImg = document.getElementById("productContentImg")
+        productContentImg.addEventListener("change", e => {
+            readImage(e.target, 1)
+        })
+
+    </script>
+
+</body>
+</html>
