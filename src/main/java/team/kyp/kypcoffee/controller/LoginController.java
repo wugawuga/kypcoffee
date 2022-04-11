@@ -79,32 +79,38 @@ public class LoginController {
         return "signin/googleLogin";
     } //로그인 폼으로 이동
 
+    @GetMapping("/signin/loginExecute")
+    public String loginExecute() {
+
+        return "redirect:/accessError";
+    }
 
     @RequestMapping(value = "/signin/loginExecute", method = RequestMethod.POST)
     public String submit(@ModelAttribute LoginCommand loginCommand, Errors errors, HttpSession session,
-                         @RequestParam(value="rememberlogin",required=false) Boolean rememberlogin,
+                         @RequestParam(value = "rememberlogin", required = false) Boolean rememberlogin,
                          HttpServletResponse response, Model model, BindingResult bindingResult
-                         ) { // 폼에서 로그인 기능을 요청
+    ) { // 폼에서 로그인 기능을 요청
+
 
         if (errors.hasErrors()) {
             return "signin/loginForm";
         }
 
         try {
-            if(rememberlogin!=null) {// 아이디 비밀번호 기억 체크 되어있다면 쿠키생성
+            if (rememberlogin != null) {// 아이디 비밀번호 기억 체크 되어있다면 쿠키생성
                 Cookie rememberId = new Cookie("rememberId", loginCommand.getId());
                 rememberId.setMaxAge(60 * 10);
                 rememberId.setPath("/");
                 response.addCookie(rememberId);
 
-            }else if(rememberlogin==null){
-                Cookie deleteId = new Cookie("rememberId", null) ;
-                deleteId.setMaxAge(0) ;
-                response.addCookie(deleteId) ;
+            } else if (rememberlogin == null) {
+                Cookie deleteId = new Cookie("rememberId", null);
+                deleteId.setMaxAge(0);
+                response.addCookie(deleteId);
             }
 
             AuthInfo authInfo = authService.authenticate(loginCommand.getId(), loginCommand.getName(), loginCommand.getNo(),
-                   loginCommand.getPw());
+                    loginCommand.getPw());
 
             // 로그인 정보를 기록할 세션 코드
             session.setAttribute("authInfo", authInfo); //멤버타입 추가
@@ -116,11 +122,11 @@ public class LoginController {
             Member member = memberRegisterService.selectById(loginCommand.getId());
             String valid = member.getMemberId();
 
-            if(!valid.equals("1")){ //회원은 존재할때
-                bindingResult.addError(new FieldError("loginCommand","id","비밀번호를 확인해 주세요."));
+            if (!valid.equals("1")) { //회원은 존재할때
+                bindingResult.addError(new FieldError("loginCommand", "id", "비밀번호를 확인해 주세요."));
 
-            }else if(valid.equals("1")){ //회원이 없을때
-                bindingResult.addError(new FieldError("loginCommand","id","존재하지 않는 회원입니다."));
+            } else if (valid.equals("1")) { //회원이 없을때
+                bindingResult.addError(new FieldError("loginCommand", "id", "존재하지 않는 회원입니다."));
             }
 
             return "signin/loginForm";

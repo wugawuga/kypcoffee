@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import team.kyp.kypcoffee.interceptor.AdminVerification;
 import team.kyp.kypcoffee.interceptor.LoginVerification;
+import team.kyp.kypcoffee.interceptor.SessionVerification;
 
 import java.util.List;
 
@@ -49,11 +50,15 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new LoginVerification())
                 .addPathPatterns("/mypage")
+                .addPathPatterns("/cartList")
                 .addPathPatterns("/admin/**")
                 .excludePathPatterns("/signin");
 
         registry.addInterceptor(new AdminVerification())
                 .addPathPatterns("/admin/**");
+
+        registry.addInterceptor(new SessionVerification())
+                .addPathPatterns("/signin/**");
 
         /*
          * registry.addInterceptor(commonInterceptor) .addPathPatterns("/**") // 추가할 url

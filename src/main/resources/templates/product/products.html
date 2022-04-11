@@ -100,97 +100,108 @@
     <div th:replace="headerFooter.html :: main-header"></div>
 
     <main id="main">
+        <th:block th:if="${all.size() == 0}">
+            <section class="breadcrumbs">
+                <div class="container">
 
-        <section class="breadcrumbs">
-            <div class="container">
-
-                <div class="d-flex justify-content-between align-items-center">
-                    <h2>Store</h2>
-<!--                    <ol>-->
-<!--                        <li><a href="javascript:void(0);" onclick="showItems1()">원두</a></li>-->
-<!--                        <li><a href="javascript:void(0);" onclick="showItems2()">텀블러</a></li>-->
-<!--                        <li><a href="javascript:void(0);" onclick="showItems3()">컵</a></li>-->
-<!--                        <li><a href="javascript:void(0);" onclick="showItems4()">굿즈</a></li>-->
-<!--                    </ol>-->
-                    <ol>
-                        <li><a href="/product/1">원두</a></li>
-                        <li><a href="/product/2">컵/텀블러</a></li>
-                        <li><a href="/product/3">시럽</a></li>
-                        <li><a href="/product/4">선물세트</a></li>
-                        <th:block th:if="${session.authInfo != null}">
-                            <li><a th:href="@{/cartList}"><i class="fas fa-shopping-cart"></i></a></li>
-                        </th:block>
-                    </ol>
-                </div>
-
-            </div>
-        </section>
-
-        <section class="inner-page">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="row justify-content-left">
-                        <div class="col-md-3 col-sm-3 col-xs-12 image-main-section" th:each="list :${all}">
-                            <div class="row img-part">
-                                <div class="col-md-12 col-sm-12 colxs-12 img-section">
-                                    <a th:href="@{/products/details(pdtCode=${list.productCode})}"><img class="productImg" th:src="|/productImg/${list.imgName}|" style="width: 250px; height:250px;"></a>
-                                </div>
-                                <div class="col-md-12 col-sm-12 col-xs-12 image-title" style="text-align: left">
-                                    <h5>[[${list.productName}]]</h5>
-                                </div>
-                            </div><br>
-                        </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2>상품이 없습니다 기다려주세요</h2>
                     </div>
-                </div><br><br>
 
-                <div style="text-align: center">
-                    <th:block th:switch="${totalCntJudge}">
-                        <th:block th:case="81">
-                            <th:block th:if="${(section)*80<totalCnt}">
+                </div>
+            </section>
+        </th:block>
+        <th:block th:unless="${all.size() == 0}">
+            <section class="breadcrumbs">
+                <div class="container">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2>Store</h2>
+                        <!--                    <ol>-->
+                        <!--                        <li><a href="javascript:void(0);" onclick="showItems1()">원두</a></li>-->
+                        <!--                        <li><a href="javascript:void(0);" onclick="showItems2()">텀블러</a></li>-->
+                        <!--                        <li><a href="javascript:void(0);" onclick="showItems3()">컵</a></li>-->
+                        <!--                        <li><a href="javascript:void(0);" onclick="showItems4()">굿즈</a></li>-->
+                        <!--                    </ol>-->
+                        <ol>
+                            <li><a href="/product/1">원두</a></li>
+                            <li><a href="/product/2">컵/텀블러</a></li>
+                            <li><a href="/product/3">시럽</a></li>
+                            <li><a href="/product/4">선물세트</a></li>
+                            <th:block th:if="${session.authInfo != null}">
+                                <li><a th:href="@{/cartList}"><i class="fas fa-shopping-cart"></i></a></li>
+                            </th:block>
+                        </ol>
+                    </div>
+
+                </div>
+            </section>
+            <section class="inner-page">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="row justify-content-left">
+                            <div class="col-md-3 col-sm-3 col-xs-12 image-main-section" th:each="list :${all}">
+                                <div class="row img-part">
+                                    <div class="col-md-12 col-sm-12 colxs-12 img-section">
+                                        <a th:href="@{/products/details(pdtCode=${list.productCode})}"><img class="productImg" th:src="|/productImg/${list.imgName}|" style="width: 250px; height:250px;"></a>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12 image-title" style="text-align: left">
+                                        <h5>[[${list.productName}]]</h5>
+                                    </div>
+                                </div><br>
+                            </div>
+                        </div>
+                    </div><br><br>
+
+                    <div style="text-align: center">
+                        <th:block th:switch="${totalCntJudge}">
+                            <th:block th:case="81">
+                                <th:block th:if="${(section)*80<totalCnt}">
+                                    <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
+                                        <th:block th:if="${section >1 && page==1}">
+                                            <a th:href="@{/product(section=${section}-1, pageNum=10)}"> << </a>
+                                        </th:block>
+                                        <a th:href="@{/product(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                        <th:block th:if="${page==10}">
+                                            <a th:href="@{/product(section=${section+1}, pageNum=1)}"> >> </a>
+                                        </th:block>
+                                    </th:block>
+                                </th:block>
+
+                                <th:block th:if="${(section)*80>totalCnt}">
+                                    <th:block th:each="page : ${#numbers.sequence(1, (((totalCnt+7)-((section)-1)*100)/8) ,1)}">
+                                        <th:block th:if="${section >1 && page==1}">
+                                            <a th:href="@{/product(section=${(section)-1}, pageNum=10)}"> << </a>
+                                        </th:block>
+                                        <a th:href="@{/product(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                    </th:block>
+                                </th:block>
+
+                                <th:block th:if="${(section)*80==totalCnt}">
+                                    <th:block th:each="page : ${#numbers.sequence(1, 10 ,1)}">
+                                        <th:block th:if="${section >1 && page==1}">
+                                            <a th:href="@{/product(section=${(section)-1}, pageNum=10)}"> << </a>
+                                        </th:block>
+                                        <a th:href="@{/product(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                                    </th:block>
+                                </th:block>
+
+                            </th:block>
+                            <th:block th:case="80">
                                 <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
-                                    <th:block th:if="${section >1 && page==1}">
-                                        <a th:href="@{/product(section=${section}-1, pageNum=10)}"> << </a>
-                                    </th:block>
-                                    <a th:href="@{/product(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
-                                    <th:block th:if="${page==10}">
-                                        <a th:href="@{/product(section=${section+1}, pageNum=1)}"> >> </a>
-                                    </th:block>
+                                    <a th:href="@{/product(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
                                 </th:block>
                             </th:block>
-
-                            <th:block th:if="${(section)*80>totalCnt}">
-                                <th:block th:each="page : ${#numbers.sequence(1, (((totalCnt+7)-((section)-1)*100)/8) ,1)}">
-                                    <th:block th:if="${section >1 && page==1}">
-                                        <a th:href="@{/product(section=${(section)-1}, pageNum=10)}"> << </a>
-                                    </th:block>
-                                    <a th:href="@{/product(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
+                            <th:block th:case="79">
+                                <th:block th:each="page : ${#numbers.sequence(1,((totalCnt+7)/8),1)}">
+                                    <a th:href="@{/product(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
                                 </th:block>
                             </th:block>
-
-                            <th:block th:if="${(section)*80==totalCnt}">
-                                <th:block th:each="page : ${#numbers.sequence(1, 10 ,1)}">
-                                    <th:block th:if="${section >1 && page==1}">
-                                        <a th:href="@{/product(section=${(section)-1}, pageNum=10)}"> << </a>
-                                    </th:block>
-                                    <a th:href="@{/product(section=${section}, pageNum=${page})}"><span th:text="${((section)-1)*10+page}"></span></a>
-                                </th:block>
-                            </th:block>
-
                         </th:block>
-                        <th:block th:case="80">
-                            <th:block th:each="page : ${#numbers.sequence(1,10,1)}">
-                                <a th:href="@{/product(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
-                            </th:block>
-                        </th:block>
-                        <th:block th:case="79">
-                            <th:block th:each="page : ${#numbers.sequence(1,((totalCnt+7)/8),1)}">
-                                <a th:href="@{/product(section=${section}, pageNum=${page})}"><span th:text="${page}"></span></a>
-                            </th:block>
-                        </th:block>
-                    </th:block>
-                </div><br>
-            </div>
-        </section>
+                    </div><br>
+                </div>
+            </section>
+        </th:block>
 
     </main>
 

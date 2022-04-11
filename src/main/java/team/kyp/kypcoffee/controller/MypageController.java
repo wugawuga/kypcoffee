@@ -22,7 +22,7 @@ public class MypageController {
     public String mypageQna(@ModelAttribute("QnaBoard") QnaBoard qnaBoard, Model model, Errors errors, HttpSession session) {
         AuthInfo ai = (AuthInfo) session.getAttribute("authInfo");
 
-        if(ai.getId().equals("admin")){
+        if(ai.getType() == 0){
             return "admin/adminMain";
         }
 
