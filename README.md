@@ -9,6 +9,8 @@
   - view 에서 null 이거나 .size() == 0 일 때 처리완료
 - 2022/05/22 custom Exception
   - ApiException 클래스를 만들어서 예외처리 추가
+- 2022/05/27 Mybatis -> Jpa migration
+  - Member Entity 추가
 
 [//]: # (- gradle build 할 때, ouath2 compile)
 
