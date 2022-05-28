@@ -35,66 +35,60 @@
                     <div class="card">
                         <div class="card-header">회원가입</div>
                         <div class="card-body">
-                            <form name="register" action="/register/register" commandName="registerForm" method="POST">
+                            <form role="form" action="/member/register" th:object="${memberForm}" method="post">
                                 <div class="form-group row">
-                                    <label for="id" class="col-md-4 col-form-label text-md-right">아이디</label>
+                                    <label class="col-md-4 col-form-label text-md-right">아이디</label>
                                     <div class="col-md-6">
-                                        <input type="text" id="id" class="form-control" name="id" placeholder="첫글자 영문 4~12자의 영문 대소문자와 숫자,-,_포함">
+                                        <input type="text" th:field="*{memberId}" class="form-control" placeholder="첫글자 영문 4~12자의 영문 대소문자와 숫자,-,_포함">
                                         <a href="#" onclick="idValidate()" style="font-size: 10.5pt"> <i class="fas fa-exclamation-circle"></i>&nbsp;아이디 중복확인</a>
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="pw" class="col-md-4 col-form-label text-md-right">비밀번호</label>
+                                    <label class="col-md-4 col-form-label text-md-right">비밀번호</label>
                                     <div class="col-md-6">
-                                        <input type="password" id="pw" class="form-control" name="pw" placeholder="문자/숫자 1개이상 포함, 8~12자리">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="confirmPw" class="col-md-4 col-form-label text-md-right">비밀번호 확인</label>
-                                    <div class="col-md-6">
-                                        <input type="password" id="confirmPw" class="form-control" name="confirmPw" placeholder="비밀번호를 다시 입력하세요">
+                                        <input type="password" th:field="*{memberPw}" class="form-control" placeholder="문자/숫자 1개이상 포함, 8~12자리">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="name" class="col-md-4 col-form-label text-md-right">성명</label>
+                                    <label class="col-md-4 col-form-label text-md-right">성명</label>
                                     <div class="col-md-6">
-                                        <input type="text" id="name" class="form-control" name="name" placeholder="성명을 입력하세요">
+                                        <input type="text" th:field="*{memberName}" class="form-control" placeholder="성명을 입력하세요">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="birth" class="col-md-4 col-form-label text-md-right">생년월일</label>
+                                    <label class="col-md-4 col-form-label text-md-right">생년월일</label>
                                     <div class="col-md-6">
-                                        <input type="text" id="birth" class="form-control" name="birth" placeholder="2000/01/01">
+                                        <input type="date" th:field="*{memberBday}" class="form-control" placeholder="2000.01.01">
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="address" class="col-md-4 col-form-label text-md-right">주소</label>
+                                    <label class="col-md-4 col-form-label text-md-right">주소</label>
                                     <div class="col-md-6">
-                                        <input type="text" id="address" class="form-control" name="address" placeholder="서울특별시 강남구 도곡동"> 
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label for="tel" class="col-md-4 col-form-label text-md-right">전화번호(일반)</label>
-                                    <div class="col-md-6">
-                                        <input type="text" id="tel" class="form-control" name="tel" placeholder="000-000-0000">
+                                        <input type="text" th:field="*{memberAddress}" class="form-control" placeholder="서울특별시 강남구 도곡동">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="phone" class="col-md-4 col-form-label text-md-right">핸드폰 번호</label>
+                                    <label class="col-md-4 col-form-label text-md-right">전화번호(일반)</label>
                                     <div class="col-md-6">
-                                        <input type="text" id="phone" class="form-control" name="phone" placeholder="010-0000-0000">
+                                        <input type="text" th:field="*{memberTel}" class="form-control" placeholder="000-000-0000">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="email" class="col-md-4 col-form-label text-md-right">이메일</label>
+                                    <label class="col-md-4 col-form-label text-md-right">핸드폰 번호</label>
                                     <div class="col-md-6">
-                                        <input type="text" id="email" class="form-control" name="email" placeholder="example@gmail.com">
+                                        <input type="text" th:field="*{memberPhone}" class="form-control" placeholder="010-0000-0000">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label text-md-right">이메일</label>
+                                    <div class="col-md-6">
+                                        <input type="text" th:field="*{memberEmail}" class="form-control" placeholder="example@gmail.com">
                                         <a href="#" onclick="emailValidate()" style="font-size: 10.5pt"><i class="fas fa-exclamation-circle"></i>&nbsp;이메일 중복확인</a>
                                     </div>
                                 </div>
@@ -102,15 +96,15 @@
                                 <div class="form-group row">
                                     <label class="col-md-4 col-form-label text-md-right">이메일 수신</label>
                                     <div class="col-md-4">
-                                        <input type="radio" name="emailyn" value="0">&nbsp;수신거부&nbsp;&nbsp;
-                                        <input type="radio" name="emailyn" value="1">&nbsp;수신
-                                        <input type="hidden" value="1" name="type"><!--일반회원 membertype 1번전송-->
+                                        <input type="radio" th:field="*{memberEmailYn}" value="0">&nbsp;수신거부&nbsp;&nbsp;
+                                        <input type="radio" th:field="*{memberEmailYn}" value="1">&nbsp;수신
+                                        <input type="hidden" id="memberType" name="memberType" value="1">
                                     </div>
                                 </div>
                                 
                                 <div class="card-body">
                                     <div class="col-md-6 offset-md-4">
-                                        <button type="button" class="btn btn-primary" style="background-color: #865439; border: 0;" onclick="validform()">
+                                        <button type="submit" class="btn btn-primary" style="background-color: #865439; border: 0;">
                                             회원가입
                                         </button>
                                         <button type="reset" class="btn btn-primary" style="background-color: #865439; border: 0;">
@@ -135,7 +129,7 @@
 
 <script>
     function idValidate(){
-        let idvalidate = document.getElementById('id').value;
+        let idvalidate = document.getElementById('memberId').value;
 
         var regExp = /^[A-Za-z]{1}[A-Za-z0-9_-]{3,11}$/;
 
@@ -179,7 +173,7 @@
 
     function emailValidate() {
 
-        let emailVal = $("#email").val();
+        let emailVal = $("#memberEmail").val();
 
         var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
         // 검증에 사용할 정규식 변수 regExp에 저장
@@ -218,60 +212,6 @@
         });
 
         }
-    }
-
-    function validform() {
-
-    var c = document.forms["register"]["name"].value;
-    var d = document.forms["register"]["address"].value;
-    var e = document.forms["register"]["pw"].value;
-    var f = document.forms["register"]["confirmPw"].value;
-    var g = document.forms["register"]["emailyn"].value;
-    var h = document.forms["register"]["tel"].value;
-    var i = document.forms["register"]["phone"].value;
-    var j = document.forms["register"]["birth"].value;
-    var re =/(?=.*\d)(?=.*[a-zA-ZS]).{8,12}/;
-
-        if(!re.test(e)) {
-            alert('비밀번호는 문자/숫자 1개이상 포함, 8~12자리 여야 합니다.')
-            return false;
-
-        }else if (c==null || c=="")
-        {
-            alert("이름이 입력되지 않았습니다.");
-            return false;
-        }else if (d==null || d=="")
-        {
-            alert("주소가 입력되지 않았습니다.");
-            return false;
-        }else if (e==null || e=="")
-        {
-            alert("비밀번호가 입력되지 않았습니다.");
-            return false;
-        }else if (e!=f) {
-            alert("비밀번호와 비밀번호 확인이 일치하지 않습니다. 다시 입력해주세요");
-            return false;
-        }else if (g==null || g=="")
-        {
-            alert("이메일 수신여부를 체크하세요");
-            return false;
-        }else if (h==null || h=="")
-        {
-            alert("전화번호가 입력되지 않았습니다.");
-            return false;
-        }else if (i==null || i=="")
-        {
-            alert("핸드폰 번호가 입력되지 않았습니다.");
-            return false;
-        }else if (j==null || j=="")
-        {
-            alert("생년월일이 입력되지 않았습니다.");
-            return false;
-        }else{
-            register.submit();
-        }
-
-
     }
 
 </script>

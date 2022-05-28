@@ -7,15 +7,15 @@ import javax.persistence.Embeddable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Embeddable
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class AddressJpa {
+@Embeddable
+public class MemberInfoJpa {
 
-    @Column(name = "memberaddress")
-    private String memberAddress;
+    @Column(name = "membertype")
+    private int memberType;
 
-    public AddressJpa(String memberAddress) {
-        this.memberAddress = memberAddress;
+    public MemberInfoJpa(int memberType) {
+        this.memberType = memberType;
     }
 }

@@ -1,26 +1,35 @@
 package team.kyp.kypcoffee.controller;
 
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import team.kyp.kypcoffee.domain.*;
 import team.kyp.kypcoffee.exception.AlreadyExistingMemberException;
+import team.kyp.kypcoffee.service.MemberDtoService;
 import team.kyp.kypcoffee.service.MemberRegisterService;
+import team.kyp.kypcoffee.service.MemberService;
 import team.kyp.kypcoffee.validator.RegisterRequestValidator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
+import team.kyp.kypcoffee.web.MemberForm;
 
 @RequiredArgsConstructor
 @Controller
+@Slf4j
 public class MemberController {
 
     private final MemberRegisterService memberRegisterService;
+    private final MemberService memberService;
+    private final MemberDtoService memberDtoService;
 
 
     //////////////////////////////////////////////////////////////////////////////비밀번호 찾기
@@ -195,9 +204,9 @@ public class MemberController {
             return "register/selection";
     }
 
-    @GetMapping("/register/register")
+    @GetMapping("/member/register")
     public String selection(Model model) {
-        model.addAttribute("registerForm",new RegisterRequest());  //작성폼 받아오기
+        model.addAttribute("memberForm",new MemberForm());  //작성폼 받아오기
         return "register/register";
     }
 
@@ -256,29 +265,19 @@ public class MemberController {
         return map;
     }
 
-    @RequestMapping(value="/register/register", method= RequestMethod.POST) //회원가입 실행-db전송
-    public String register(RegisterRequest regReq, Errors errors,Model model, HttpSession session) {
+    @PostMapping("/member/register")
+    public String register(@Valid MemberForm form, BindingResult result) {
 
-        System.out.println("폼 정보받아오기 테스트"+ regReq.getName() + +regReq.getEmailyn()+ regReq.getType());
-
-        new RegisterRequestValidator().validate(regReq, errors);
-
-        if(errors.hasErrors()) {
+        if(result.hasErrors()) {
+            log.info("에러발생");
             return "register/register";
         }
 
-        try {
-            memberRegisterService.register(regReq);
-            System.out.println("세션저장/회원가입 완료");
+        MemberJpa member = memberDtoService.change(form);
 
-            return "register/success";
+        memberService.join(member);
 
-        }catch(AlreadyExistingMemberException e) {
-            //errors.rejectValue("email", "duplicate"); //메세지 수정해야함
-            return "register/register";
-        }
-
-
+        return "register/success";
     }
 
     @RequestMapping(value="/updateInfo", method= RequestMethod.GET) //회원정보수정
