@@ -90,7 +90,7 @@ public class KakaoService {
                 //AuthInfo 세션에 저장하기
 
                 Member member = memberRegisterService.selectByEmailOnly(kakao.getEmail());
-                AuthInfo authInfo = new AuthInfo(member.getMemberId(), member.getMemberName(), member.getMemberNum(),member.getMemberPw(), kakao.getEmail(), kakao.getPicture(),member.getMemberType());
+                AuthInfo authInfo = AuthInfo.sessionCreate(member.getMemberId(), member.getMemberName(), kakao.getEmail(), member.getMemberType());
                 httpSession.setAttribute("authInfo", authInfo);
                 return userInfo;
 
@@ -106,7 +106,7 @@ public class KakaoService {
                 //AuthInfo 세션에 저장하기
 
                 Member member = memberRegisterService.selectByEmailOnly(kakao.getEmail());
-                AuthInfo authInfo = new AuthInfo(member.getMemberId(), member.getMemberName(), member.getMemberNum(),member.getMemberPw(), kakao.getEmail(), kakao.getPicture(),member.getMemberType());
+                AuthInfo authInfo = AuthInfo.sessionCreate(member.getMemberId(), member.getMemberName(), kakao.getEmail(), member.getMemberType());
                 httpSession.setAttribute("authInfo", authInfo);
 
                 System.out.println("카카오 가입완료/ 세션 저장 완료");
