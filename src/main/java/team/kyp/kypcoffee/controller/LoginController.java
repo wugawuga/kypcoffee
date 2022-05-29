@@ -85,14 +85,14 @@ public class LoginController {
         return "redirect:/accessError";
     }
 
-    @RequestMapping(value = "/signin/loginExecute", method = RequestMethod.POST)
-    public String submit(@ModelAttribute LoginCommand loginCommand, Errors errors, HttpSession session,
+    @PostMapping("/signin/loginExecute")
+    public String submit(@ModelAttribute LoginCommand loginCommand, HttpSession session,
                          @RequestParam(value = "rememberlogin", required = false) Boolean rememberlogin,
-                         HttpServletResponse response, Model model, BindingResult bindingResult
+                         HttpServletResponse response, BindingResult bindingResult
     ) { // 폼에서 로그인 기능을 요청
 
 
-        if (errors.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             return "signin/loginForm";
         }
 
@@ -109,8 +109,7 @@ public class LoginController {
                 response.addCookie(deleteId);
             }
 
-            AuthInfo authInfo = authService.authenticate(loginCommand.getId(), loginCommand.getName(), loginCommand.getNo(),
-                    loginCommand.getPw());
+            AuthInfo authInfo = authService.authenticate(loginCommand);
 
             // 로그인 정보를 기록할 세션 코드
             session.setAttribute("authInfo", authInfo); //멤버타입 추가
