@@ -14,4 +14,10 @@ public class MemberRepository {
     public void save(MemberJpa memberJpa) {
         em.persist(memberJpa);
     }
+
+    public MemberJpa findByMemberid(String memberid) {
+        return em.createQuery("select m from MemberJpa m where m.memberId = :memberid", MemberJpa.class)
+            .setParameter("memberid", memberid)
+            .getSingleResult();
+    }
 }
