@@ -1,24 +1,28 @@
 package team.kyp.kypcoffee.controller;
 
+import java.util.HashMap;
+import javax.persistence.NoResultException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import team.kyp.kypcoffee.domain.AuthInfo;
 import team.kyp.kypcoffee.domain.LoginCommand;
-import team.kyp.kypcoffee.domain.Member;
-import team.kyp.kypcoffee.exception.IdPasswordNotMatchingException;
 import team.kyp.kypcoffee.service.AuthService;
 import team.kyp.kypcoffee.service.KakaoService;
 import team.kyp.kypcoffee.service.MemberRegisterService;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 
 @RequiredArgsConstructor
 @Controller
@@ -31,24 +35,26 @@ public class LoginController {
 
     @RequestMapping("/signin/kakao")
     @ResponseBody
-    public HashMap<String, Object> kakao(Model model, @RequestBody String accessToken) { //json으로 토큰 받아서 서버에 전송. 가입실행
+    public HashMap<String, Object> kakao(Model model,
+        @RequestBody String accessToken) { //json으로 토큰 받아서 서버에 전송. 가입실행
         HashMap<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
 
         HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("result",userInfo); // DB에 존재하는 아이디인지?
+        map.put("result", userInfo); // DB에 존재하는 아이디인지?
 
         return map;
     }
 
     @RequestMapping("/signin")
-    public String login(Model model,@CookieValue(value="rememberId", required=false) Cookie cookie) {
+    public String login(Model model,
+        @CookieValue(value = "rememberId", required = false) Cookie cookie) {
 
         model.addAttribute("loginCommand", new LoginCommand());
 
-        if(cookie!=null) {
-            System.out.println("쿠키값"+cookie.getValue());
-            String cookieval=cookie.getValue();
-            model.addAttribute("cookie",cookieval); //쿠키저장되어있으면 모델에 전달
+        if (cookie != null) {
+            System.out.println("쿠키값" + cookie.getValue());
+            String cookieval = cookie.getValue();
+            model.addAttribute("cookie", cookieval); //쿠키저장되어있으면 모델에 전달
         }
 
         return "signin/loginForm";
@@ -87,51 +93,33 @@ public class LoginController {
 
     @PostMapping("/signin/loginExecute")
     public String submit(@ModelAttribute LoginCommand loginCommand, HttpSession session,
-                         @RequestParam(value = "rememberlogin", required = false) Boolean rememberlogin,
-                         HttpServletResponse response, BindingResult bindingResult
-    ) { // 폼에서 로그인 기능을 요청
+        @RequestParam(value = "rememberlogin", required = false) Boolean rememberlogin,
+        HttpServletResponse response, BindingResult bindingResult
+    ) {
 
+        if (rememberlogin != null) {// 아이디 비밀번호 기억 체크 되어있다면 쿠키생성
+            Cookie rememberId = new Cookie("rememberId", loginCommand.getId());
+            rememberId.setMaxAge(60 * 10);
+            rememberId.setPath("/");
+            response.addCookie(rememberId);
 
-        if (bindingResult.hasErrors()) {
-            return "signin/loginForm";
+        } else if (rememberlogin == null) {
+            Cookie deleteId = new Cookie("rememberId", null);
+            deleteId.setMaxAge(0);
+            response.addCookie(deleteId);
         }
 
         try {
-            if (rememberlogin != null) {// 아이디 비밀번호 기억 체크 되어있다면 쿠키생성
-                Cookie rememberId = new Cookie("rememberId", loginCommand.getId());
-                rememberId.setMaxAge(60 * 10);
-                rememberId.setPath("/");
-                response.addCookie(rememberId);
-
-            } else if (rememberlogin == null) {
-                Cookie deleteId = new Cookie("rememberId", null);
-                deleteId.setMaxAge(0);
-                response.addCookie(deleteId);
-            }
-
             AuthInfo authInfo = authService.authenticate(loginCommand);
 
-            // 로그인 정보를 기록할 세션 코드
-            session.setAttribute("authInfo", authInfo); //멤버타입 추가
+            session.setAttribute("authInfo", authInfo);
 
             return "signin/loginSuccess";
 
-        } catch (IdPasswordNotMatchingException e) {
-
-            Member member = memberRegisterService.selectById(loginCommand.getId());
-            String valid = member.getMemberId();
-
-            if (!valid.equals("1")) { //회원은 존재할때
-                bindingResult.addError(new FieldError("loginCommand", "pw", "비밀번호를 확인해 주세요."));
-
-            } else if (valid.equals("1")) { //회원이 없을때
-                bindingResult.addError(new FieldError("loginCommand", "id", "존재하지 않는 회원입니다."));
-            }
+        } catch (Exception e) {
+            bindingResult.addError(new FieldError("loginCommand", "id", e.getMessage()));
 
             return "signin/loginForm";
         }
-
     }
-
-
 }

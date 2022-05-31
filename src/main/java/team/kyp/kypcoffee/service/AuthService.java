@@ -1,5 +1,7 @@
 package team.kyp.kypcoffee.service;
 
+import java.util.Optional;
+import javax.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,8 @@ public class AuthService {
 
         MemberJpa memberJpa = memberRepository.findByMemberid(loginCommand.getId());
 
-        if(memberJpa==null) {
-            throw new IdPasswordNotMatchingException();
-        }
-        if(!memberJpa.getMemberPw().equals(loginCommand.getPw())) {
-            throw new IdPasswordNotMatchingException();
+        if (!memberJpa.getMemberPw().equals(loginCommand.getPw())) {
+            throw new IllegalArgumentException("비밀번호를 확인확인확인");
         }
 
         return AuthInfo.sessionCreate(memberJpa.getMemberId(),
