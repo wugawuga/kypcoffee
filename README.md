@@ -11,6 +11,10 @@
   - ApiException 클래스를 만들어서 예외처리 추가
 - 2022/05/27 Mybatis -> Jpa migration
   - Member Entity 추가
+- 2022/05/28 Mybatis -> Jpa migration
+  - 로그인 jpa로 수정
+- 2022/05/30 AuthService
+  - 로그인 인증 수정 (예외처리추가)
 
 [//]: # (- gradle build 할 때, ouath2 compile)
 
