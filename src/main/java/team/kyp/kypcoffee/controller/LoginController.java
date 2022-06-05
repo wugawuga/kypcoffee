@@ -5,6 +5,7 @@ import javax.persistence.NoResultException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -92,7 +93,7 @@ public class LoginController {
     }
 
     @PostMapping("/signin/loginExecute")
-    public String submit(@ModelAttribute LoginCommand loginCommand, HttpSession session,
+    public String submit(@Valid LoginCommand loginCommand, HttpSession session,
         @RequestParam(value = "rememberlogin", required = false) Boolean rememberlogin,
         HttpServletResponse response, BindingResult bindingResult
     ) {
